@@ -64,8 +64,8 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
             toDegrees -= 360;
         }
         getContext().beginPath();
-        getContext().arc(width / 2, width / 2-getBorderWidth(), width / 2 - (getBorderWidth()*2), Math.toRadians(180), Math.toRadians(toDegrees));
-        getContext().lineTo(width / 2, width / 2-getBorderWidth());
+        getContext().arc(width / 2, width / 2-(getBorderWidth()*2), width / 2 - (getBorderWidth()*4), Math.toRadians(180), Math.toRadians(toDegrees));
+        getContext().lineTo(width / 2, width / 2-(getBorderWidth()*2));
         getContext().closePath();
         getContext().fill();
         if (isBorderEnabled()) {
@@ -95,7 +95,7 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
 
     private void drawBorder(int width, int height) {
         getContext().beginPath();
-        getContext().arc(width / 2, width / 2-getBorderWidth(), width / 2 - (getBorderWidth()*2), Math.toRadians(180), Math.toRadians(0));
+        getContext().arc(width / 2, width / 2-(getBorderWidth()*2), width / 2 - (getBorderWidth()*4), Math.toRadians(180), Math.toRadians(0));
         getContext().closePath();
         getContext().stroke();
     }

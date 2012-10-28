@@ -3,6 +3,7 @@ package eu.straider.web.gwt.gauges.client.components;
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
+import com.google.gwt.core.client.GWT;
 import eu.straider.web.gwt.gauges.client.ColorRange;
 
 public class SimpleGauge<T extends Number> extends AbstractGauge<T> {
@@ -65,7 +66,10 @@ public class SimpleGauge<T extends Number> extends AbstractGauge<T> {
         
         getContext().setLineWidth(lineWidth);
         getContext().setLineCap(Context2d.LineCap.ROUND);
-        double degrees = ((double) gaugeDegrees / (double) 100) * (getMaxValue().doubleValue() / (double) 100 * arcValue);
+        double maxVal = (getMaxValue().doubleValue()-getMinValue().doubleValue());
+        double onePercentDegree = (double) gaugeDegrees / (double) 100;
+        double onePercentVal = (double) 100/maxVal ;
+        double degrees = onePercentDegree * (onePercentVal * (arcValue-getMinValue().doubleValue()));
 
         int toDegrees = startDegrees + (int) degrees;
         if (toDegrees > 360) {

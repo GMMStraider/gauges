@@ -1,7 +1,6 @@
 package eu.straider.web.gwt.gauges.client;
 
 import com.google.gwt.canvas.dom.client.CssColor;
-import java.util.Objects;
 
 class ColorRangeImpl<T extends Number> implements ColorRange<T> {
 

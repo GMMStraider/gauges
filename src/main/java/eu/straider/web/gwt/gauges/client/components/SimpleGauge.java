@@ -7,7 +7,7 @@ import eu.straider.web.gwt.gauges.client.ColorRange;
 
 public class SimpleGauge<T extends Number> extends AbstractGauge<T> {
 
-    private int lineWidth;
+    private double lineWidth;
     private int gaugeDegrees;
     private int startDegrees = 150;
 
@@ -15,7 +15,7 @@ public class SimpleGauge<T extends Number> extends AbstractGauge<T> {
         this(20, 240, minValue, maxValue, value);
     }
 
-    public SimpleGauge(int lineWidth, int gaugeDegrees, T minValue, T maxValue, T value) {
+    public SimpleGauge(double lineWidth, int gaugeDegrees, T minValue, T maxValue, T value) {
         super();
         setGaugeDegrees(gaugeDegrees);
         this.lineWidth = lineWidth;

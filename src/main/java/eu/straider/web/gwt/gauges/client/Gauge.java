@@ -30,9 +30,7 @@ public interface Gauge<T extends Number> extends HasValue<T>, HasAnimation, IsRe
 
     void setMaxValue(T maxValue);
 
-    void setWidth(int width);
-
-    void setHeight(int height);
+    void setSize(int size);
 
     void setAnimationDuration(int milliseconds);
 

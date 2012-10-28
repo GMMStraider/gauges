@@ -21,6 +21,15 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
         setAnimationEnabled(true);
         setValue(value, false);
     }
+    
+    @Override
+    public void setSize(int size) {
+        getCanvas().setHeight(size/2+"px");
+        getCanvas().setWidth(size+"px");
+        
+        getCanvas().setCoordinateSpaceHeight(size/2);
+        getCanvas().setCoordinateSpaceWidth(size);
+    }
 
     @Override
     public final void setValue(T value, boolean fireEvents) {
@@ -55,8 +64,8 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
             toDegrees -= 360;
         }
         getContext().beginPath();
-        getContext().arc(width / 2, height / 2, width / 2 - getBorderWidth(), Math.toRadians(180), Math.toRadians(toDegrees));
-        getContext().lineTo(width / 2, height / 2);
+        getContext().arc(width / 2, width / 2-getBorderWidth(), width / 2 - (getBorderWidth()*2), Math.toRadians(180), Math.toRadians(toDegrees));
+        getContext().lineTo(width / 2, width / 2-getBorderWidth());
         getContext().closePath();
         getContext().fill();
         if (isBorderEnabled()) {
@@ -81,12 +90,12 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
         getContext().setFillStyle("black");
         getContext().setFont(getFont());
         getContext().setTextAlign(Context2d.TextAlign.CENTER);
-        getContext().fillText(getValueFormat().format(valueText), getCanvas().getCanvasElement().getWidth() / 2, getCanvas().getCanvasElement().getHeight() / 2 + 50);
+        getContext().fillText(getValueFormat().format(valueText), getCanvas().getCanvasElement().getWidth() / 2, getCanvas().getCanvasElement().getHeight() /1.2);
     }
 
     private void drawBorder(int width, int height) {
         getContext().beginPath();
-        getContext().arc(width / 2, height / 2, width / 2 - getBorderWidth(), Math.toRadians(180), Math.toRadians(0));
+        getContext().arc(width / 2, width / 2-getBorderWidth(), width / 2 - (getBorderWidth()*2), Math.toRadians(180), Math.toRadians(0));
         getContext().closePath();
         getContext().stroke();
     }

@@ -112,16 +112,12 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     }
 
     @Override
-    public void setHeight(int height) {
-        canvas.setHeight(height+"px");
+    public void setSize(int size) {
+        canvas.setHeight(size+"px");
+        canvas.setWidth(size+"px");
         
-        canvas.setCoordinateSpaceHeight(height);
-    }
-
-    @Override
-    public void setWidth(int width) {
-        canvas.setWidth(width+"px");
-        canvas.setCoordinateSpaceWidth(width);
+        canvas.setCoordinateSpaceHeight(size);
+        canvas.setCoordinateSpaceWidth(size);
     }
     
     @Override

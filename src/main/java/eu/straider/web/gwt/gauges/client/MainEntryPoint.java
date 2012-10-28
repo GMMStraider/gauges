@@ -24,8 +24,7 @@ public class MainEntryPoint implements EntryPoint {
     @Override
     public void onModuleLoad() {
         final Gauge<Integer> gauge = new SimpleGauge(20, 240, 0, 100, 50);
-        gauge.setHeight(400);
-        gauge.setWidth(400);
+        gauge.setSize(400);
         gauge.setBorderEnabled(true);
         gauge.setBorderWidth(2);
         gauge.setAnimationDuration(300);
@@ -36,8 +35,7 @@ public class MainEntryPoint implements EntryPoint {
 //        gauge.addStyleName("gauge");
         RootPanel.get().add(gauge);
         final Gauge<Integer> gauge2 = new SimpleFillArcGauge(0, 100, 50);
-        gauge2.setHeight(400);
-        gauge2.setWidth(400);
+        gauge2.setSize(400);
         gauge2.setBorderEnabled(true);
         gauge2.setBorderWidth(2);
         gauge2.setAnimationDuration(300);

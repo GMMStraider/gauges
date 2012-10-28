@@ -5,32 +5,22 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
 import eu.straider.web.gwt.gauges.client.ColorRange;
 
-public class SimpleGauge<T extends Number> extends AbstractGauge<T> {
+public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
 
     private double lineWidth;
-    private int gaugeDegrees;
-    private int startDegrees = 150;
 
-    public SimpleGauge(T minValue, T maxValue, T value) {
-        this(20, 240, minValue, maxValue, value);
+    public SimpleFillArcGauge(T minValue, T maxValue, T value) {
+        this(3, minValue, maxValue, value);
     }
-
-    public SimpleGauge(double lineWidth, int gaugeDegrees, T minValue, T maxValue, T value) {
+    
+    public SimpleFillArcGauge(double lineWidth, T minValue, T maxValue, T value) {
         super();
-        setGaugeDegrees(gaugeDegrees);
         this.lineWidth = lineWidth;
         setFont("bold 32px Lucida Console");
         setMinValue(minValue);
         setMaxValue(maxValue);
         setAnimationEnabled(true);
         setValue(value, false);
-    }
-
-    public final void setGaugeDegrees(int degrees) {
-        if (degrees > 1) {
-            gaugeDegrees = degrees;
-            startDegrees = 270 - (gaugeDegrees / 2);
-        }
     }
 
     @Override
@@ -61,22 +51,25 @@ public class SimpleGauge<T extends Number> extends AbstractGauge<T> {
         int height = getCanvas().getCanvasElement().getHeight();
         getContext().restore();
         getContext().clearRect(0, 0, width, height);
-        getContext().setStrokeStyle(getCurrentGaugeColor(arcValue));
-        
+        getContext().setStrokeStyle("black");
+        getContext().setFillStyle(getCurrentGaugeColor(arcValue));
         getContext().setLineWidth(lineWidth);
-        getContext().setLineCap(Context2d.LineCap.ROUND);
+        
+        getContext().setLineCap(Context2d.LineCap.SQUARE);
         double maxVal = (getMaxValue().doubleValue()-getMinValue().doubleValue());
-        double onePercentDegree = (double) gaugeDegrees / (double) 100;
+        double onePercentDegree = (double) 180 / (double) 100;
         double onePercentVal = (double) 100/maxVal ;
         double degrees = onePercentDegree * (onePercentVal * (arcValue-getMinValue().doubleValue()));
 
-        int toDegrees = startDegrees + (int) degrees;
+        int toDegrees = 180 + (int) degrees;
         if (toDegrees > 360) {
             toDegrees -= 360;
         }
         getContext().beginPath();
+        getContext().arc(width / 2, height / 2, width / 2 - lineWidth, Math.toRadians(180), Math.toRadians(toDegrees));
+        getContext().lineTo(width / 2, height / 2);
         getContext().closePath();
-        getContext().arc(width / 2, height / 2, width / 2 - lineWidth, Math.toRadians(startDegrees), Math.toRadians(toDegrees));
+        getContext().fill();
         getContext().stroke();
     }
 
@@ -94,9 +87,10 @@ public class SimpleGauge<T extends Number> extends AbstractGauge<T> {
     }
     
     private void drawValueText(T valueText) {
+        getContext().setFillStyle("black");
         getContext().setFont(getFont());
         getContext().setTextAlign(Context2d.TextAlign.CENTER);
-        getContext().fillText(getValueFormat().format(valueText), getCanvas().getCanvasElement().getWidth() / 2, getCanvas().getCanvasElement().getHeight() / 2);
+        getContext().fillText(getValueFormat().format(valueText), getCanvas().getCanvasElement().getWidth() / 2, getCanvas().getCanvasElement().getHeight() / 2 + 50);
     }
 
     class SimpleGaugeValueAnimation extends Animation {

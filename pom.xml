@@ -8,12 +8,19 @@
     <packaging>war</packaging>
 
     <name>GWT-Gauges</name>
-
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
     <properties>
         <gwt.version>2.4.0</gwt.version>
         <runTarget>demo.html</runTarget>
         <downloadSources>true</downloadSources>
         <gwt.style>DETAILED</gwt.style>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
         
@@ -98,6 +105,7 @@
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
 
@@ -134,6 +142,14 @@
                     <tasks>
                         <delete dir="${project.build.directory}/classes/javax"/>
                     </tasks>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.4.3</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
         </plugins>

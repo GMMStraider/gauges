@@ -20,6 +20,7 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     private Canvas canvas;
     private T value;
     private boolean animate;
+    private boolean borderVisible;
     private T minValue;
     private T maxValue;
     private int animationDuration;
@@ -27,16 +28,20 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     private String font;
     private List<ColorRange<T>> colorRanges;
     private CssColor gaugeColor;
+    private CssColor borderColor;
+    private double borderWidth;
 
     public AbstractGauge() {
         animate = true;
         gaugeColor = CssColor.make("black");
+        borderColor = CssColor.make("black");
         colorRanges = new ArrayList<ColorRange<T>>();
         valueMask = NumberFormat.getFormat("0");
         font = "normal 10px monospace";
         canvas = Canvas.createIfSupported();
         context = canvas.getContext2d();
         animationDuration = 200;
+        borderWidth = 1;
         initWidget(canvas);
     }
     
@@ -176,5 +181,35 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public CssColor getGaugeColor() {
         return gaugeColor;
+    }
+
+    @Override
+    public void setBorderWidth(double borderWidth) {
+        this.borderWidth = borderWidth;
+    }
+
+    @Override
+    public double getBorderWidth() {
+        return borderWidth;
+    }
+
+    @Override
+    public void setBorderColor(CssColor color) {
+        this.borderColor = color;
+    }
+
+    @Override
+    public CssColor getBorderColor() {
+        return borderColor;
+    }
+
+    @Override
+    public void setBorderEnabled(boolean enabled) {
+        borderVisible = enabled;
+    }
+
+    @Override
+    public boolean isBorderEnabled() {
+        return borderVisible;
     }
 }

@@ -43,7 +43,7 @@ public class SimpleGauge<T extends Number> extends AbstractGauge<T> {
         } else if (value.doubleValue() < getMinValue().doubleValue()) {
             value = getMinValue();
         }
-        if(oldValue == null) {
+        if (oldValue == null) {
             oldValue = getMinValue();
         }
 
@@ -51,6 +51,9 @@ public class SimpleGauge<T extends Number> extends AbstractGauge<T> {
             SimpleGaugeValueAnimation animation = new SimpleGaugeValueAnimation();
             animation.goToValue(value, oldValue, getAnimationDuration());
         } else {
+            if (isBorderEnabled()) {
+                drawBorder(value.doubleValue());
+            }
             drawArc(value.doubleValue());
             drawValueText(value);
         }
@@ -60,15 +63,50 @@ public class SimpleGauge<T extends Number> extends AbstractGauge<T> {
         int width = getCanvas().getCanvasElement().getWidth();
         int height = getCanvas().getCanvasElement().getHeight();
         getContext().restore();
-        getContext().clearRect(0, 0, width, height);
+        if (!isBorderEnabled()) {
+            getContext().clearRect(0, 0, width, height);
+        }
         getContext().setStrokeStyle(getCurrentGaugeColor(arcValue));
-        
         getContext().setLineWidth(lineWidth);
+        drawGenericArc(arcValue, width, height);
+    }
+
+    void drawBorder(double arcValue) {
+        int width = getCanvas().getCanvasElement().getWidth();
+        int height = getCanvas().getCanvasElement().getHeight();
+        getContext().restore();
+        getContext().clearRect(0, 0, width, height);
+        getContext().setStrokeStyle(getBorderColor());
+        getContext().setLineWidth(lineWidth + (2 * getBorderWidth()));
+        drawGenericArc(arcValue, width, height);
+    }
+
+    private CssColor getCurrentGaugeColor(double arcValue) {
+        CssColor color = null;
+        for (ColorRange range : getColorRanges()) {
+            if (arcValue >= range.getMin().doubleValue() && arcValue <= range.getMax().doubleValue()) {
+                color = range.getColor();
+            }
+        }
+        if (color == null) {
+            color = getGaugeColor();
+        }
+        return color;
+    }
+
+    private void drawValueText(T valueText) {
+        getContext().setFillStyle(CssColor.make("black"));
+        getContext().setFont(getFont());
+        getContext().setTextAlign(Context2d.TextAlign.CENTER);
+        getContext().fillText(getValueFormat().format(valueText), getCanvas().getCanvasElement().getWidth() / 2, getCanvas().getCanvasElement().getHeight() / 2);
+    }
+
+    private void drawGenericArc(double arcValue, int width, int height) {
         getContext().setLineCap(Context2d.LineCap.ROUND);
-        double maxVal = (getMaxValue().doubleValue()-getMinValue().doubleValue());
+        double maxVal = (getMaxValue().doubleValue() - getMinValue().doubleValue());
         double onePercentDegree = (double) gaugeDegrees / (double) 100;
-        double onePercentVal = (double) 100/maxVal ;
-        double degrees = onePercentDegree * (onePercentVal * (arcValue-getMinValue().doubleValue()));
+        double onePercentVal = (double) 100 / maxVal;
+        double degrees = onePercentDegree * (onePercentVal * (arcValue - getMinValue().doubleValue()));
 
         int toDegrees = startDegrees + (int) degrees;
         if (toDegrees > 360) {
@@ -78,25 +116,6 @@ public class SimpleGauge<T extends Number> extends AbstractGauge<T> {
         getContext().closePath();
         getContext().arc(width / 2, height / 2, width / 2 - lineWidth, Math.toRadians(startDegrees), Math.toRadians(toDegrees));
         getContext().stroke();
-    }
-
-    private CssColor getCurrentGaugeColor(double arcValue) {
-        CssColor color = null;
-        for(ColorRange range : getColorRanges()) {
-            if(arcValue>=range.getMin().doubleValue() && arcValue<=range.getMax().doubleValue()) {
-                color = range.getColor();
-            }
-        }
-        if(color == null) {
-            color = getGaugeColor();
-        }
-        return color;
-    }
-    
-    private void drawValueText(T valueText) {
-        getContext().setFont(getFont());
-        getContext().setTextAlign(Context2d.TextAlign.CENTER);
-        getContext().fillText(getValueFormat().format(valueText), getCanvas().getCanvasElement().getWidth() / 2, getCanvas().getCanvasElement().getHeight() / 2);
     }
 
     class SimpleGaugeValueAnimation extends Animation {
@@ -113,9 +132,11 @@ public class SimpleGauge<T extends Number> extends AbstractGauge<T> {
         @Override
         protected void onUpdate(double progress) {
             double tmp = oldValue.doubleValue() + (step.doubleValue() * progress);
+            if (isBorderEnabled()) {
+                drawBorder(tmp);
+            }
             drawArc(tmp);
             drawValueText((T) new Double(tmp));
         }
     }
-    
 }

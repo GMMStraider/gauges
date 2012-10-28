@@ -7,15 +7,14 @@ import eu.straider.web.gwt.gauges.client.ColorRange;
 
 public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
 
-    private double lineWidth;
-
     public SimpleFillArcGauge(T minValue, T maxValue, T value) {
         this(3, minValue, maxValue, value);
     }
-    
-    public SimpleFillArcGauge(double lineWidth, T minValue, T maxValue, T value) {
+
+    public SimpleFillArcGauge(double borderWidth, T minValue, T maxValue, T value) {
         super();
-        this.lineWidth = lineWidth;
+        setBorderEnabled(true);
+        setBorderWidth(borderWidth);
         setFont("bold 32px Lucida Console");
         setMinValue(minValue);
         setMaxValue(maxValue);
@@ -33,7 +32,7 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
         } else if (value.doubleValue() < getMinValue().doubleValue()) {
             value = getMinValue();
         }
-        if(oldValue == null) {
+        if (oldValue == null) {
             oldValue = getMinValue();
         }
 
@@ -49,48 +48,61 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
     void drawArc(double arcValue) {
         int width = getCanvas().getCanvasElement().getWidth();
         int height = getCanvas().getCanvasElement().getHeight();
-        getContext().restore();
-        getContext().clearRect(0, 0, width, height);
-        getContext().setStrokeStyle("black");
-        getContext().setFillStyle(getCurrentGaugeColor(arcValue));
-        getContext().setLineWidth(lineWidth);
-        
-        getContext().setLineCap(Context2d.LineCap.SQUARE);
-        double maxVal = (getMaxValue().doubleValue()-getMinValue().doubleValue());
-        double onePercentDegree = (double) 180 / (double) 100;
-        double onePercentVal = (double) 100/maxVal ;
-        double degrees = onePercentDegree * (onePercentVal * (arcValue-getMinValue().doubleValue()));
+        double degrees = setArcData(width, height, arcValue);
 
         int toDegrees = 180 + (int) degrees;
         if (toDegrees > 360) {
             toDegrees -= 360;
         }
         getContext().beginPath();
-        getContext().arc(width / 2, height / 2, width / 2 - lineWidth, Math.toRadians(180), Math.toRadians(toDegrees));
+        getContext().arc(width / 2, height / 2, width / 2 - getBorderWidth(), Math.toRadians(180), Math.toRadians(toDegrees));
         getContext().lineTo(width / 2, height / 2);
         getContext().closePath();
         getContext().fill();
-        getContext().stroke();
+        if (isBorderEnabled()) {
+            drawBorder(width, height);
+        }
     }
 
     private CssColor getCurrentGaugeColor(double arcValue) {
         CssColor color = null;
-        for(ColorRange range : getColorRanges()) {
-            if(arcValue>=range.getMin().doubleValue() && arcValue<=range.getMax().doubleValue()) {
+        for (ColorRange range : getColorRanges()) {
+            if (arcValue >= range.getMin().doubleValue() && arcValue <= range.getMax().doubleValue()) {
                 color = range.getColor();
             }
         }
-        if(color == null) {
+        if (color == null) {
             color = getGaugeColor();
         }
         return color;
     }
-    
+
     private void drawValueText(T valueText) {
         getContext().setFillStyle("black");
         getContext().setFont(getFont());
         getContext().setTextAlign(Context2d.TextAlign.CENTER);
         getContext().fillText(getValueFormat().format(valueText), getCanvas().getCanvasElement().getWidth() / 2, getCanvas().getCanvasElement().getHeight() / 2 + 50);
+    }
+
+    private void drawBorder(int width, int height) {
+        getContext().beginPath();
+        getContext().arc(width / 2, height / 2, width / 2 - getBorderWidth(), Math.toRadians(180), Math.toRadians(0));
+        getContext().closePath();
+        getContext().stroke();
+    }
+
+    private double setArcData(int width, int height, double arcValue) {
+        getContext().restore();
+        getContext().clearRect(0, 0, width, height);
+        getContext().setStrokeStyle(getBorderColor());
+        getContext().setFillStyle(getCurrentGaugeColor(arcValue));
+        getContext().setLineWidth(getBorderWidth());
+        getContext().setLineCap(Context2d.LineCap.SQUARE);
+        double maxVal = (getMaxValue().doubleValue() - getMinValue().doubleValue());
+        double onePercentDegree = (double) 180 / (double) 100;
+        double onePercentVal = (double) 100 / maxVal;
+        double degrees = onePercentDegree * (onePercentVal * (arcValue - getMinValue().doubleValue()));
+        return degrees;
     }
 
     class SimpleGaugeValueAnimation extends Animation {
@@ -111,5 +123,4 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
             drawValueText((T) new Double(tmp));
         }
     }
-    
 }

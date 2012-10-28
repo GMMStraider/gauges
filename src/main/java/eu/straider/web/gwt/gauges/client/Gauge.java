@@ -65,4 +65,16 @@ public interface Gauge<T extends Number> extends HasValue<T>, HasAnimation, IsRe
     void addStyleName(String style);
     
     void removeStyleName(String style);
+    
+    void setBorderWidth(double borderWidth);
+    
+    double getBorderWidth();
+    
+    void setBorderColor(CssColor color);
+
+    CssColor getBorderColor();
+    
+    void setBorderEnabled(boolean enabled);
+    
+    boolean isBorderEnabled();
 }

@@ -88,6 +88,14 @@ public interface Gauge<T extends Number> extends HasValue<T>, HasAnimation, IsRe
     
     int getMajorTicks();
     
+    void setMajorTicksSizeInPercentOfSize(double size);
+    
+    void setMinorTicksSizeInPercentOfSize(double size);
+    
+    double getMajorTicksSizeInPercentOfSize();
+    
+    double getMinorTicksSizeInPercentOfSize();
+    
     void setGaugeTextEnabled(boolean enabled);
     
     boolean isGaugeTextEnabled();

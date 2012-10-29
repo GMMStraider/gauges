@@ -89,18 +89,32 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
 
     @Override
     void drawGaugeTicks(double currentValue) {
-        for (int val = getMinValue().intValue(); val <= getMaxValue().intValue(); val += 10) {
-            getContext().beginPath();
-            final double radiansVal = Math.toRadians(getDegreesForValue((int) val));
-            int x = (int) (Math.cos(radiansVal) * (radius - 10));
-            int y = (int) (Math.sin(radiansVal) * (radius - 10));
-            getContext().moveTo(gaugeCenterX + x, gaugeCenterY + y);
-            x = (int) (Math.cos(radiansVal) * radius);
-            y = (int) (Math.sin(radiansVal) * radius);
-            getContext().lineTo(gaugeCenterX + x, gaugeCenterY + y);
-            getContext().stroke();
-            getContext().closePath();
+        double majorTickLength = width / 100 * getMajorTicksSizeInPercentOfSize();
+        double minorTickLength = width / 100 * getMinorTicksSizeInPercentOfSize();
+        double maxVal = (getMaxValue().doubleValue() - getMinValue().doubleValue());
+        double tickSizeMajor = maxVal / (getMajorTicks()+1);
+        double tickSizeMinor = tickSizeMajor / (getMinorTicks()+1);
+        for (double majorVal = getMinValue().doubleValue(); majorVal <= getMaxValue().doubleValue(); majorVal += tickSizeMajor) {
+            double minorVal = majorVal;
+            for(int i = 0; i < getMinorTicks(); i++) {
+                minorVal += tickSizeMinor;
+                drawTick(minorVal, radius - minorTickLength);
+            }
+            drawTick(majorVal, radius - majorTickLength);
         }
+    }
+
+    private void drawTick(double value, double tickRadius) {
+        getContext().beginPath();
+        final double radiansVal = Math.toRadians(getDegreesForValue(value));
+        int x = (int) (Math.cos(radiansVal) * (tickRadius));
+        int y = (int) (Math.sin(radiansVal) * (tickRadius));
+        getContext().moveTo(gaugeCenterX + x, gaugeCenterY + y);
+        x = (int) (Math.cos(radiansVal) * radius);
+        y = (int) (Math.sin(radiansVal) * radius);
+        getContext().lineTo(gaugeCenterX + x, gaugeCenterY + y);
+        getContext().stroke();
+        getContext().closePath();
     }
 
     @Override

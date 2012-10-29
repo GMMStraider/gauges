@@ -35,6 +35,8 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     private int minorTicks;
     private boolean drawTicks;
     private boolean drawText;
+    private double majorTicksSize;
+    private double minorTicksSize;
     private GaugeAnimation<T> gaugeAnimation;
 
     public AbstractGauge() {
@@ -51,6 +53,8 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
         borderWidth = 1;
         majorTicks = 0;
         minorTicks = 0;
+        majorTicksSize = 3;
+        minorTicksSize = 1;
         drawTicks = false;
         gaugeAnimation = new SimpleGaugeValueAnimation<T>(this);
         initWidget(canvas);
@@ -269,6 +273,26 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public int getMajorTicks() {
         return majorTicks;
+    }
+
+    @Override
+    public void setMajorTicksSizeInPercentOfSize(double size) {
+        majorTicksSize = size;
+    }
+
+    @Override
+    public void setMinorTicksSizeInPercentOfSize(double size) {
+        minorTicksSize = size;
+    }
+
+    @Override
+    public double getMajorTicksSizeInPercentOfSize() {
+        return majorTicksSize;
+    }
+
+    @Override
+    public double getMinorTicksSizeInPercentOfSize() {
+        return minorTicksSize;
     }
 
     @Override

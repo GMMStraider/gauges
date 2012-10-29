@@ -75,4 +75,24 @@ public interface Gauge<T extends Number> extends HasValue<T>, HasAnimation, IsRe
     void setBorderEnabled(boolean enabled);
     
     boolean isBorderEnabled();
+    
+    boolean isTicksEnabled();
+    
+    void setTicksEnabled(boolean enabled);
+    
+    void setMinorTicks(int ticks);
+    
+    int getMinorTicks();
+    
+    void setMajorTicks(int ticks);
+    
+    int getMajorTicks();
+    
+    void setGaugeTextEnabled(boolean enabled);
+    
+    boolean isGaugeTextEnabled();
+    
+    void setGaugeAnimation(GaugeAnimation<T> animation);
+    
+    GaugeAnimation<T> getGaugeAnimation();
 }

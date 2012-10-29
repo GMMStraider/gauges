@@ -1,6 +1,5 @@
 package eu.straider.web.gwt.gauges.client.components;
 
-import com.google.gwt.animation.client.Animation;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
 import eu.straider.web.gwt.gauges.client.ColorRange;
@@ -48,40 +47,15 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
     }
 
     @Override
-    public final void setValue(T value, boolean fireEvents) {
-        T oldValue = getValue();
-        super.setValue(value, fireEvents);
-
-        if (value.doubleValue() > getMaxValue().doubleValue()) {
-            value = getMaxValue();
-        } else if (value.doubleValue() < getMinValue().doubleValue()) {
-            value = getMinValue();
-        }
-        if (oldValue == null) {
-            oldValue = getMinValue();
-        }
-
-        if (isAnimationEnabled()) {
-            SimpleGaugeValueAnimation animation = new SimpleGaugeValueAnimation();
-            animation.goToValue(value, oldValue, getAnimationDuration());
-        } else {
-            drawArc(value.doubleValue());
-            drawValueText(value);
-        }
-    }
-
-    void drawArc(double arcValue) {
-        setArcData(arcValue);
-        double degrees = getDegreesForValue(arcValue);
+    void drawGaugeDial(double currentValue) {
+        setArcData(currentValue);
+        double degrees = getDegreesForValue(currentValue);
 
         getContext().beginPath();
         getContext().arc(gaugeCenterX, gaugeCenterY, radius, Math.toRadians(180), Math.toRadians(degrees));
         getContext().lineTo(gaugeCenterX, gaugeCenterY);
         getContext().closePath();
         getContext().fill();
-        if (isBorderEnabled()) {
-            drawBorder();
-        }
     }
 
     private CssColor getCurrentGaugeColor(double arcValue) {
@@ -97,30 +71,49 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
         return color;
     }
 
-    private void drawValueText(T valueText) {
+    @Override
+    void drawGaugeText(double currentValue) {
         getContext().setFillStyle("black");
         getContext().setFont(getFont());
         getContext().setTextAlign(Context2d.TextAlign.CENTER);
-        getContext().fillText(getValueFormat().format(valueText), getCanvas().getCanvasElement().getWidth() / 2, getCanvas().getCanvasElement().getHeight() / 1.2);
+        getContext().fillText(getValueFormat().format(currentValue), getCanvas().getCanvasElement().getWidth() / 2, getCanvas().getCanvasElement().getHeight() / 1.2);
     }
 
-    private void drawBorder() {
+    @Override
+    void drawGaugeBorder(double currentValue) {
         getContext().beginPath();
         getContext().arc(gaugeCenterX, gaugeCenterY, radius, Math.toRadians(180), Math.toRadians(0));
         getContext().closePath();
         getContext().stroke();
+    }
 
+    @Override
+    void drawGaugeTicks(double currentValue) {
         for (int val = getMinValue().intValue(); val <= getMaxValue().intValue(); val += 10) {
             getContext().beginPath();
             final double radiansVal = Math.toRadians(getDegreesForValue((int) val));
-            int x = (int) (Math.cos(radiansVal) * (radius-10));
-            int y = (int) (Math.sin(radiansVal) * (radius-10));
+            int x = (int) (Math.cos(radiansVal) * (radius - 10));
+            int y = (int) (Math.sin(radiansVal) * (radius - 10));
             getContext().moveTo(gaugeCenterX + x, gaugeCenterY + y);
             x = (int) (Math.cos(radiansVal) * radius);
             y = (int) (Math.sin(radiansVal) * radius);
             getContext().lineTo(gaugeCenterX + x, gaugeCenterY + y);
             getContext().stroke();
             getContext().closePath();
+        }
+    }
+
+    @Override
+    protected void drawGauge(double currentValue) {
+        drawGaugeDial(currentValue);
+        if (isGaugeTextEnabled()) {
+            drawGaugeText(currentValue);
+        }
+        if (isBorderEnabled()) {
+            drawGaugeBorder(currentValue);
+        }
+        if (isTicksEnabled()) {
+            drawGaugeTicks(currentValue);
         }
     }
 
@@ -143,24 +136,5 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
             degrees -= 360;
         }
         return degrees;
-    }
-
-    class SimpleGaugeValueAnimation extends Animation {
-
-        private T oldValue;
-        private T step;
-
-        void goToValue(T toValue, T oldValue, int milliseconds) {
-            this.oldValue = oldValue;
-            step = (T) Double.valueOf(toValue.doubleValue() - oldValue.doubleValue());
-            run(milliseconds);
-        }
-
-        @Override
-        protected void onUpdate(double progress) {
-            double tmp = oldValue.doubleValue() + (step.doubleValue() * progress);
-            drawArc(tmp);
-            drawValueText((T) new Double(tmp));
-        }
     }
 }

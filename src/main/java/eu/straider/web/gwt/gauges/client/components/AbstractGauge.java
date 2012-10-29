@@ -1,5 +1,6 @@
 package eu.straider.web.gwt.gauges.client.components;
 
+import eu.straider.web.gwt.gauges.client.GaugeAnimation;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
@@ -30,9 +31,15 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     private CssColor gaugeColor;
     private CssColor borderColor;
     private double borderWidth;
+    private int majorTicks;
+    private int minorTicks;
+    private boolean drawTicks;
+    private boolean drawText;
+    private GaugeAnimation<T> gaugeAnimation;
 
     public AbstractGauge() {
         animate = true;
+        drawText = true;
         gaugeColor = CssColor.make("black");
         borderColor = CssColor.make("black");
         colorRanges = new ArrayList<ColorRange<T>>();
@@ -42,9 +49,23 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
         context = canvas.getContext2d();
         animationDuration = 200;
         borderWidth = 1;
+        majorTicks = 0;
+        minorTicks = 0;
+        drawTicks = false;
+        gaugeAnimation = new SimpleGaugeValueAnimation<T>(this);
         initWidget(canvas);
     }
-    
+
+    @Override
+    public void setGaugeAnimation(GaugeAnimation<T> animation) {
+        gaugeAnimation = animation;
+    }
+
+    @Override
+    public GaugeAnimation<T> getGaugeAnimation() {
+        return gaugeAnimation;
+    }
+
     protected Canvas getCanvas() {
         return canvas;
     }
@@ -65,12 +86,22 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
 
     @Override
     public void setValue(T value, boolean fireEvents) {
-        if(value.doubleValue() > maxValue.doubleValue()) {
+        T oldValue = getValue();
+        if (value.doubleValue() > maxValue.doubleValue()) {
             value = maxValue;
-        } else if(value.doubleValue() < minValue.doubleValue()) {
+        } else if (value.doubleValue() < minValue.doubleValue()) {
             value = minValue;
         }
         this.value = value;
+        if (oldValue == null) {
+            oldValue = getMinValue();
+        }
+
+        if (isAnimationEnabled()) {
+            gaugeAnimation.goToValue(value, oldValue, getAnimationDuration());
+        } else {
+            drawGauge(value.doubleValue());
+        }
         if (fireEvents) {
             ValueChangeEvent.fire(this, value);
         }
@@ -113,18 +144,18 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
 
     @Override
     public void setSize(int size) {
-        canvas.setHeight(size+"px");
-        canvas.setWidth(size+"px");
-        
+        canvas.setHeight(size + "px");
+        canvas.setWidth(size + "px");
+
         canvas.setCoordinateSpaceHeight(size);
         canvas.setCoordinateSpaceWidth(size);
     }
-    
+
     @Override
     public void setAnimationDuration(int milliseconds) {
         animationDuration = milliseconds;
     }
-    
+
     @Override
     public int getAnimationDuration() {
         return animationDuration;
@@ -134,46 +165,47 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     public void setValueFormat(NumberFormat mask) {
         this.valueMask = mask;
     }
-    
+
     @Override
     public NumberFormat getValueFormat() {
         return valueMask;
     }
-    
+
     @Override
     public void setFont(String font) {
         this.font = font;
     }
-    
+
     @Override
     public String getFont() {
         return font;
     }
-    
+
     @Override
     public void addColorRange(ColorRange range) {
         colorRanges.add(range);
     }
-    
+
     @Override
     public List<ColorRange<T>> getColorRanges() {
         return Collections.unmodifiableList(colorRanges);
     }
-    
+
     @Override
     public void removeColorRange(ColorRange range) {
         colorRanges.remove(range);
     }
-    
+
     @Override
     public void clearColorRanges() {
         colorRanges.clear();
     }
+
     @Override
     public void setGaugeColor(CssColor color) {
         gaugeColor = color;
     }
-    
+
     @Override
     public CssColor getGaugeColor() {
         return gaugeColor;
@@ -208,4 +240,65 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     public boolean isBorderEnabled() {
         return borderVisible;
     }
+
+    @Override
+    public boolean isTicksEnabled() {
+        return drawTicks;
+    }
+
+    @Override
+    public void setTicksEnabled(boolean enabled) {
+        drawTicks = enabled;
+    }
+
+    @Override
+    public void setMinorTicks(int ticks) {
+        minorTicks = ticks;
+    }
+
+    @Override
+    public int getMinorTicks() {
+        return minorTicks;
+    }
+
+    @Override
+    public void setMajorTicks(int ticks) {
+        majorTicks = ticks;
+    }
+
+    @Override
+    public int getMajorTicks() {
+        return majorTicks;
+    }
+
+    @Override
+    public void setGaugeTextEnabled(boolean enabled) {
+        drawText = enabled;
+    }
+
+    @Override
+    public boolean isGaugeTextEnabled() {
+        return drawText;
+    }
+
+    protected void drawGauge(double currentValue) {
+        if (isBorderEnabled()) {
+            drawGaugeBorder(currentValue);
+        }
+        drawGaugeDial(currentValue);
+        if (isGaugeTextEnabled()) {
+            drawGaugeText(currentValue);
+        }
+        if (isTicksEnabled()) {
+            drawGaugeTicks(currentValue);
+        }
+    }
+
+    abstract void drawGaugeDial(double currentValue);
+
+    abstract void drawGaugeText(double currentValue);
+
+    abstract void drawGaugeBorder(double currentValue);
+
+    abstract void drawGaugeTicks(double currentValue);
 }

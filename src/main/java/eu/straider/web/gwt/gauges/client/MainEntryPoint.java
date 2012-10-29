@@ -40,6 +40,7 @@ public class MainEntryPoint implements EntryPoint {
         gauge2.setBorderWidth(2);
         gauge2.setAnimationDuration(300);
         gauge2.setValueFormat(NumberFormat.getFormat("0"));
+        gauge2.setTicksEnabled(true);
         gauge2.addColorRange(new ColorRangeBuilder<Integer>().setMinValue(0).setMaxValue(50).setColor(CssColor.make("green")).build());
         gauge2.addColorRange(new ColorRangeBuilder<Integer>().setMinValue(50).setMaxValue(75).setColor(CssColor.make("yellow")).build());
         gauge2.addColorRange(new ColorRangeBuilder<Integer>().setMinValue(75).setMaxValue(100).setColor(CssColor.make("red")).build());

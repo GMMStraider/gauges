@@ -88,6 +88,15 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
     }
 
     @Override
+    void drawGaugeBackground(double currentValue) {
+        getContext().setFillStyle(getBackgroundColor());
+        getContext().beginPath();
+        getContext().arc(gaugeCenterX, gaugeCenterY, radius, Math.toRadians(180), Math.toRadians(0));
+        getContext().closePath();
+        getContext().fill();
+    }
+
+    @Override
     void drawGaugeTicks(double currentValue) {
         double majorTickLength = width / 100 * getMajorTicksSizeInPercentOfSize();
         double minorTickLength = width / 100 * getMinorTicksSizeInPercentOfSize();
@@ -119,6 +128,11 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
 
     @Override
     protected void drawGauge(double currentValue) {
+        getContext().restore();
+        getContext().clearRect(0, 0, width, height);
+        if(isBackgroundColorEnabled()) {
+            drawGaugeBackground(currentValue);
+        }
         drawGaugeDial(currentValue);
         if (isGaugeTextEnabled()) {
             drawGaugeText(currentValue);
@@ -132,8 +146,6 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
     }
 
     private void setArcData(double arcValue) {
-        getContext().restore();
-        getContext().clearRect(0, 0, width, height);
         getContext().setStrokeStyle(getBorderColor());
         getContext().setFillStyle(getCurrentGaugeColor(arcValue));
         getContext().setLineWidth(getBorderWidth());

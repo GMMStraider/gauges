@@ -76,6 +76,14 @@ public interface Gauge<T extends Number> extends HasValue<T>, HasAnimation, IsRe
     
     boolean isBorderEnabled();
     
+    void setBackgroundColor(CssColor color);
+    
+    CssColor getBackgroundColor();
+    
+    void setBackgroundColorEnabled(boolean enabled);
+    
+    boolean isBackgroundColorEnabled();
+    
     boolean isTicksEnabled();
     
     void setTicksEnabled(boolean enabled);

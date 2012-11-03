@@ -32,6 +32,7 @@ public class MainEntryPoint implements EntryPoint {
         gauge.addColorRange(new ColorRangeBuilder<Integer>().setMinValue(0).setMaxValue(50).setColor(CssColor.make("green")).build());
         gauge.addColorRange(new ColorRangeBuilder<Integer>().setMinValue(50).setMaxValue(75).setColor(CssColor.make("yellow")).build());
         gauge.addColorRange(new ColorRangeBuilder<Integer>().setMinValue(75).setMaxValue(100).setColor(CssColor.make("red")).build());
+        gauge.setBackgroundColor(CssColor.make("lightgrey"));
 //        gauge.addStyleName("gauge");
         RootPanel.get().add(gauge);
         final Gauge<Integer> gauge2 = new SimpleFillArcGauge(0, 100, 50);
@@ -48,6 +49,7 @@ public class MainEntryPoint implements EntryPoint {
         gauge2.addColorRange(new ColorRangeBuilder<Integer>().setMinValue(0).setMaxValue(50).setColor(CssColor.make("green")).build());
         gauge2.addColorRange(new ColorRangeBuilder<Integer>().setMinValue(50).setMaxValue(75).setColor(CssColor.make("yellow")).build());
         gauge2.addColorRange(new ColorRangeBuilder<Integer>().setMinValue(75).setMaxValue(100).setColor(CssColor.make("red")).build());
+        gauge2.setBackgroundColor(CssColor.make("lightgrey"));
         RootPanel.get().add(gauge2);
         final IntegerBox box = new IntegerBox();
         RootPanel.get().add(box);

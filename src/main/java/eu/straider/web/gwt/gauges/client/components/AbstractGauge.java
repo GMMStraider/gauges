@@ -1,6 +1,5 @@
 package eu.straider.web.gwt.gauges.client.components;
 
-import eu.straider.web.gwt.gauges.client.GaugeAnimation;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
@@ -11,6 +10,7 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.Composite;
 import eu.straider.web.gwt.gauges.client.ColorRange;
 import eu.straider.web.gwt.gauges.client.Gauge;
+import eu.straider.web.gwt.gauges.client.GaugeAnimation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +30,8 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     private List<ColorRange<T>> colorRanges;
     private CssColor gaugeColor;
     private CssColor borderColor;
+    private CssColor backgroundColor;
+    private boolean backgroundEnabled;
     private double borderWidth;
     private int majorTicks;
     private int minorTicks;
@@ -40,10 +42,12 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     private GaugeAnimation<T> gaugeAnimation;
 
     public AbstractGauge() {
+        backgroundEnabled = true;
         animate = true;
         drawText = true;
         gaugeColor = CssColor.make("black");
         borderColor = CssColor.make("black");
+        backgroundColor = CssColor.make("white");
         colorRanges = new ArrayList<ColorRange<T>>();
         valueMask = NumberFormat.getFormat("0");
         font = "normal 10px monospace";
@@ -116,6 +120,26 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
         return addHandler(handler, ValueChangeEvent.getType());
     }
 
+    @Override
+    public void setBackgroundColor(CssColor color) {
+        backgroundColor = color;
+    }
+    
+    @Override
+    public CssColor getBackgroundColor() {
+        return backgroundColor;
+    }
+    
+    @Override
+    public void setBackgroundColorEnabled(boolean enabled) {
+        backgroundEnabled = enabled;
+    }
+    
+    @Override
+    public boolean isBackgroundColorEnabled() {
+        return backgroundEnabled;
+    }
+    
     @Override
     public boolean isAnimationEnabled() {
         return animate;
@@ -306,6 +330,9 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     }
 
     protected void drawGauge(double currentValue) {
+        if(isBackgroundColorEnabled()) {
+            drawGaugeBackground(currentValue);
+        }
         if (isBorderEnabled()) {
             drawGaugeBorder(currentValue);
         }
@@ -325,4 +352,6 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     abstract void drawGaugeBorder(double currentValue);
 
     abstract void drawGaugeTicks(double currentValue);
+    
+    abstract void drawGaugeBackground(double currentValue);
 }

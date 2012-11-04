@@ -50,14 +50,12 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
         double onePercentGauge = (double) getGaugeHeight() / (double) 100;
         double onePercentVal = (double) 100 / maxVal;
         drawColorRanges(onePercentGauge, onePercentVal);
-        getContext().setStrokeStyle(getGaugeColor());
-        getContext().setLineWidth(1);
+        getContext().setFillStyle(getGaugeColor());
         getContext().beginPath();
         double gaugePos = (getGaugeHeight() - (onePercentGauge * (onePercentVal * (currentValue)))) + getBorderWidth();
-        getContext().moveTo(width / 4 - (2 * lineWidth), gaugePos);
-        getContext().lineTo(width / 4 + (2 * lineWidth), gaugePos);
+        getContext().fillRect(width / 4 - (2 * lineWidth), gaugePos, 4 * lineWidth, 1);
         getContext().closePath();
-        getContext().stroke();
+        getContext().fill();
     }
 
     @Override
@@ -107,17 +105,16 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
     }
 
     private void drawTick(double value, double tickStartPosition, double tickLength) {
-        getContext().setStrokeStyle(CssColor.make("black"));
+        getContext().setFillStyle(CssColor.make("black"));
         getContext().beginPath();
         getContext().setLineWidth(1);
         double maxVal = (getMaxValue().doubleValue() - getMinValue().doubleValue());
         double onePercentGauge = (double) getGaugeHeight() / (double) 100;
         double onePercentVal = (double) 100 / maxVal;
         double gaugePos = (getGaugeHeight() - (onePercentGauge * (onePercentVal * (value)))) + getBorderWidth();
-        getContext().moveTo((int) tickStartPosition, (int) gaugePos);
-        getContext().lineTo((int) tickStartPosition + (int) tickLength, (int) gaugePos);
+        getContext().fillRect((int) tickStartPosition, gaugePos, tickLength, 1);
         getContext().closePath();
-        getContext().stroke();
+        getContext().fill();
     }
 
     private void drawColorRanges(double onePercentGauge, double onePercentVal) {

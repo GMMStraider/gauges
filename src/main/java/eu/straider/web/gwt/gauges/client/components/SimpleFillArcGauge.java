@@ -101,15 +101,17 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
         double majorTickLength = width / 100 * getMajorTicksSizeInPercentOfSize();
         double minorTickLength = width / 100 * getMinorTicksSizeInPercentOfSize();
         double maxVal = (getMaxValue().doubleValue() - getMinValue().doubleValue());
-        double tickSizeMajor = maxVal / (getMajorTicks()+1);
-        double tickSizeMinor = tickSizeMajor / (getMinorTicks()+1);
-        for (double majorVal = getMinValue().doubleValue(); majorVal <= getMaxValue().doubleValue(); majorVal += tickSizeMajor) {
+        double tickSizeMajor = maxVal / (getMajorTicks() - 1);
+        double tickSizeMinor = tickSizeMajor / (getMinorTicks() + 1);
+        double majorVal = getMinValue().doubleValue();
+        for (int i = 0; i <= getMajorTicks(); i++) {
             double minorVal = majorVal;
-            for(int i = 0; i < getMinorTicks(); i++) {
+            for (int j = 0; j < getMinorTicks(); j++) {
                 minorVal += tickSizeMinor;
                 drawTick(minorVal, radius - minorTickLength);
             }
             drawTick(majorVal, radius - majorTickLength);
+            majorVal += tickSizeMajor;
         }
     }
 
@@ -122,15 +124,15 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
         x = (int) (Math.cos(radiansVal) * radius);
         y = (int) (Math.sin(radiansVal) * radius);
         getContext().lineTo(gaugeCenterX + x, gaugeCenterY + y);
-        getContext().stroke();
         getContext().closePath();
+        getContext().stroke();
     }
 
     @Override
     protected void drawGauge(double currentValue) {
         getContext().restore();
         getContext().clearRect(0, 0, width, height);
-        if(isBackgroundColorEnabled()) {
+        if (isBackgroundColorEnabled()) {
             drawGaugeBackground(currentValue);
         }
         drawGaugeDial(currentValue);

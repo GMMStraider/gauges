@@ -9,6 +9,8 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
 
     private double lineWidth;
     private SimpleGaugeValueAnimation animation;
+    private int width;
+    private int height;
 
     public MarkerGauge(T minValue, T maxValue, T value) {
         this(20, minValue, maxValue, value);
@@ -18,6 +20,8 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
         super();
         animation = new SimpleGaugeValueAnimation(this);
         this.lineWidth = lineWidth;
+        width = 0;
+        height = 0;
         setFont("bold 32px Lucida Console");
         setMinValue(minValue);
         setMaxValue(maxValue);
@@ -25,31 +29,31 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
         setValue(value, false);
     }
 
-    private CssColor getCurrentGaugeColor(double arcValue) {
-        CssColor color = null;
-        for (ColorRange range : getColorRanges()) {
-            if (arcValue >= range.getMin().doubleValue() && arcValue <= range.getMax().doubleValue()) {
-                color = range.getColor();
-            }
-        }
-        if (color == null) {
-            color = getGaugeColor();
-        }
-        return color;
+    @Override
+    public void setSize(int size) {
+        getCanvas().setHeight(size + "px");
+        getCanvas().setWidth(size / 2 + "px");
+
+        getCanvas().setCoordinateSpaceHeight(size);
+        getCanvas().setCoordinateSpaceWidth(size / 2);
+        width = size / 2;
+        height = size;
+    }
+
+    private double getGaugeHeight() {
+        return height - (2 * getBorderWidth());
     }
 
     @Override
     void drawGaugeDial(double currentValue) {
-        int width = getCanvas().getCanvasElement().getWidth();
-        int height = getCanvas().getCanvasElement().getHeight();
         double maxVal = (getMaxValue().doubleValue() - getMinValue().doubleValue());
-        double onePercentGauge = (double) height / (double) 100;
+        double onePercentGauge = (double) getGaugeHeight() / (double) 100;
         double onePercentVal = (double) 100 / maxVal;
-        drawColorRanges(onePercentGauge, onePercentVal, width, height);
+        drawColorRanges(onePercentGauge, onePercentVal);
         getContext().setStrokeStyle(getGaugeColor());
         getContext().setLineWidth(1);
         getContext().beginPath();
-        double gaugePos = height - (onePercentGauge * (onePercentVal * (currentValue)));
+        double gaugePos = (getGaugeHeight() - (onePercentGauge * (onePercentVal * (currentValue)))) + getBorderWidth();
         getContext().moveTo(width / 4 - (2 * lineWidth), gaugePos);
         getContext().lineTo(width / 4 + (2 * lineWidth), gaugePos);
         getContext().closePath();
@@ -58,8 +62,6 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
 
     @Override
     void drawGaugeBackground(double currentValue) {
-        int width = getCanvas().getCanvasElement().getWidth();
-        int height = getCanvas().getCanvasElement().getHeight();
         getContext().setStrokeStyle(getBackgroundColor());
         getContext().setLineWidth(lineWidth + (2 * getBorderWidth()));
     }
@@ -69,21 +71,17 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
         getContext().setFillStyle(CssColor.make("black"));
         getContext().setFont(getFont());
         getContext().setTextAlign(Context2d.TextAlign.CENTER);
-        getContext().fillText(getValueFormat().format(currentValue), getCanvas().getCanvasElement().getWidth() / 2, getCanvas().getCanvasElement().getHeight() / 2);
+        getContext().fillText(getValueFormat().format(currentValue), (width / 4) * 3, height / 2);
     }
 
     @Override
     void drawGaugeBorder(double currentValue) {
-        int width = getCanvas().getCanvasElement().getWidth();
-        int height = getCanvas().getCanvasElement().getHeight();
         getContext().setStrokeStyle(getBorderColor());
         getContext().setLineWidth(lineWidth + (2 * getBorderWidth()));
     }
 
     @Override
     protected void drawGauge(double currentValue) {
-        int width = getCanvas().getCanvasElement().getWidth();
-        int height = getCanvas().getCanvasElement().getHeight();
         getContext().restore();
         getContext().clearRect(0, 0, width, height);
         super.drawGauge(currentValue);
@@ -91,9 +89,38 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
 
     @Override
     void drawGaugeTicks(double currentValue) {
+        double majorTickLength = getGaugeHeight() / 100 * getMajorTicksSizeInPercentOfSize();
+        double minorTickLength = getGaugeHeight() / 100 * getMinorTicksSizeInPercentOfSize();
+        double maxVal = (getMaxValue().doubleValue() - getMinValue().doubleValue());
+        double tickSizeMajor = maxVal / (getMajorTicks() - 1);
+        double tickSizeMinor = tickSizeMajor / (getMinorTicks() + 1);
+        double majorVal = getMinValue().doubleValue();
+        for (int i = 0; i <= getMajorTicks(); i++) {
+            double minorVal = majorVal;
+            for (int j = 0; j < getMinorTicks(); j++) {
+                minorVal += tickSizeMinor;
+                drawTick(minorVal, width / 4 + (2 * lineWidth), minorTickLength);
+            }
+            drawTick(majorVal, width / 4 + (2 * lineWidth), majorTickLength);
+            majorVal += tickSizeMajor;
+        }
     }
 
-    private void drawColorRanges(double onePercentGauge, double onePercentVal, int width, int height) {
+    private void drawTick(double value, double tickStartPosition, double tickLength) {
+        getContext().setStrokeStyle(CssColor.make("black"));
+        getContext().beginPath();
+        getContext().setLineWidth(1);
+        double maxVal = (getMaxValue().doubleValue() - getMinValue().doubleValue());
+        double onePercentGauge = (double) getGaugeHeight() / (double) 100;
+        double onePercentVal = (double) 100 / maxVal;
+        double gaugePos = (getGaugeHeight() - (onePercentGauge * (onePercentVal * (value)))) + getBorderWidth();
+        getContext().moveTo((int) tickStartPosition, (int) gaugePos);
+        getContext().lineTo((int) tickStartPosition + (int) tickLength, (int) gaugePos);
+        getContext().closePath();
+        getContext().stroke();
+    }
+
+    private void drawColorRanges(double onePercentGauge, double onePercentVal) {
         getContext().setLineWidth(lineWidth);
         getContext().setLineCap(Context2d.LineCap.BUTT);
         for (ColorRange range : getColorRanges()) {
@@ -103,8 +130,8 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
             double maxHeight = onePercentGauge * (onePercentVal * (max.doubleValue()));
             getContext().setStrokeStyle(range.getColor());
             getContext().beginPath();
-            getContext().moveTo(width / 4, height - minHeight);
-            getContext().lineTo(width / 4, height - maxHeight);
+            getContext().moveTo(width / 4, getGaugeHeight() - minHeight + getBorderWidth());
+            getContext().lineTo(width / 4, getGaugeHeight() - maxHeight + getBorderWidth());
             getContext().closePath();
             getContext().stroke();
         }

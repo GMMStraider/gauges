@@ -69,8 +69,8 @@ public class MainEntryPoint implements EntryPoint {
         gauge.setValueFormat(NumberFormat.getFormat("0"));
         gauge.setMinorTicksSizeInPercentOfSize(2);
         gauge.setMajorTicksSizeInPercentOfSize(4);
-        gauge.setMajorTicks(6);
-        gauge.setMinorTicks(5);
+        gauge.setMajorTicks(9);
+        gauge.setMinorTicks(4);
         gauge.setTicksEnabled(true);
         gauge.setGaugeColor(CssColor.make("darkred"));
         gauge.addColorRange(new ColorRangeBuilder<Integer>().setMinValue(0).setMaxValue(50).setColor(CssColor.make("green")).build());

@@ -113,7 +113,7 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
     }
 
     private double getGaugeHeight() {
-        return height - (width / 2.5);
+        return height - (width / 2.5) - (2 * getBorderWidth());
     }
 
     @Override
@@ -122,7 +122,7 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
         getContext().setFillStyle(getGaugeColor());
         getContext().beginPath();
         double gaugePos = getGaugePosForValue(currentValue);
-        getContext().fillRect(getBorderWidth(), gaugePos, width - (2 * getBorderWidth()), 1.5);
+        getContext().fillRect(3 * getBorderWidth(), gaugePos, width - (6 * getBorderWidth()), 1.5);
         getContext().closePath();
         getContext().fill();
     }
@@ -130,8 +130,8 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
     @Override
     void drawGaugeBackground(double currentValue) {
         getContext().setFillStyle(getBackgroundColor());
-        double tmpDelta = getBorderWidth() / 2;
-        fillRoundRect(tmpDelta, tmpDelta, width - getBorderWidth(), height - getBorderWidth(), width / 5);
+        double tmpDelta = getBorderWidth() / 2 + (2 * getBorderWidth());
+        fillRoundRect(tmpDelta, tmpDelta, width - (5 * getBorderWidth()), height - (5 * getBorderWidth()), width / 5);
     }
 
     @Override
@@ -142,8 +142,8 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
     void drawGaugeBorder(double currentValue) {
         getContext().setStrokeStyle(getBorderColor());
         getContext().setLineWidth(getBorderWidth());
-        double tmpDelta = getBorderWidth() / 2;
-        strokeRoundRect(tmpDelta, tmpDelta, width - getBorderWidth(), height - getBorderWidth(), width / 5);
+        double tmpDelta = getBorderWidth() / 2 + (2 * getBorderWidth());
+        strokeRoundRect(tmpDelta, tmpDelta, width - (5 * getBorderWidth()), height - (5 * getBorderWidth()), width / 5);
     }
 
     private void strokeRoundRect(double x, double y, double w, double h, double r) {

@@ -95,6 +95,7 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
             maxVal = getMaxValue().doubleValue() - getMinValue().doubleValue();
             onePercentGauge = (double) getGaugeHeight() / (double) 100;
             onePercentVal = (double) 100 / maxVal;
+            GWT.log("onePercentVal: " + onePercentVal + ", onePercentGauge: " + onePercentGauge + ", minValue: " + getMinValue().doubleValue());
             getContext().setFont(getFont());
             double tmpMaxFontWidth = getContext().measureText(getValueFormat().format(getMaxValue().doubleValue())).getWidth();
             double tmpMinFontWidth = getContext().measureText(getValueFormat().format(getMinValue().doubleValue())).getWidth();
@@ -172,21 +173,23 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
 
     @Override
     protected void drawGauge(double currentValue) {
-        getContext().restore();
-        getContext().clearRect(0, 0, width, height);
-        if (isBackgroundColorEnabled()) {
-            drawGaugeBackground(currentValue);
+        if (isVisible()) {
+            getContext().restore();
+            getContext().clearRect(0, 0, width, height);
+            if (isBackgroundColorEnabled()) {
+                drawGaugeBackground(currentValue);
+            }
+            if (isBorderEnabled()) {
+                drawGaugeBorder(currentValue);
+            }
+            if (isGaugeTextEnabled()) {
+                drawGaugeText(currentValue);
+            }
+            if (isTicksEnabled()) {
+                drawGaugeTicks(currentValue);
+            }
+            drawGaugeDial(currentValue);
         }
-        if (isBorderEnabled()) {
-            drawGaugeBorder(currentValue);
-        }
-        if (isGaugeTextEnabled()) {
-            drawGaugeText(currentValue);
-        }
-        if (isTicksEnabled()) {
-            drawGaugeTicks(currentValue);
-        }
-        drawGaugeDial(currentValue);
     }
 
     @Override
@@ -209,7 +212,11 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
     }
 
     private double getGaugePosForValue(double value) {
-        return (getGaugeHeight() - (onePercentGauge * (onePercentVal * (value)))) + getGaugeStartPos();
+        double tmp = value;
+        if(getMinValue().doubleValue() < 0) {
+            tmp = value -getMinValue().doubleValue();
+        } 
+        return (getGaugeHeight() - (onePercentGauge * (onePercentVal * (tmp)))) + getGaugeStartPos();
     }
 
     private void drawTick(double value, double tickStartPosition, double tickLength) {
@@ -233,11 +240,15 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
     }
 
     private void drawColorRanges(double onePercentGauge, double onePercentVal) {
+        double tmp = 0;
+        if(getMinValue().doubleValue() < 0) {
+            tmp = getMinValue().doubleValue() * -1;
+        } 
         for (ColorRange range : getColorRanges()) {
             Number min = range.getMin();
             Number max = range.getMax();
-            double minHeight = onePercentGauge * (onePercentVal * (min.doubleValue()));
-            double maxHeight = onePercentGauge * (onePercentVal * (max.doubleValue()));
+            double minHeight = onePercentGauge * (onePercentVal * (min.doubleValue()+tmp));
+            double maxHeight = onePercentGauge * (onePercentVal * (max.doubleValue()+tmp));
             getContext().setFillStyle(range.getColor());
             getContext().beginPath();
             double colorHeight = (getGaugeHeight() - maxHeight) - (getGaugeHeight() - minHeight);

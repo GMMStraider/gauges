@@ -67,23 +67,22 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
         gaugeAnimation = new SimpleGaugeValueAnimation<T>(this);
         initWidget(canvas);
     }
-    
-    
+
     @Override
     public void setTextColor(CssColor color) {
         textColor = color;
     }
-    
+
     @Override
     public CssColor getTextColor() {
         return textColor;
     }
-    
+
     @Override
     public void setTickColor(CssColor color) {
         tickColor = color;
     }
-    
+
     @Override
     public CssColor getTickColor() {
         return tickColor;
@@ -149,22 +148,22 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     public void setBackgroundColor(CssColor color) {
         backgroundColor = color;
     }
-    
+
     @Override
     public CssColor getBackgroundColor() {
         return backgroundColor;
     }
-    
+
     @Override
     public void setBackgroundColorEnabled(boolean enabled) {
         backgroundEnabled = enabled;
     }
-    
+
     @Override
     public boolean isBackgroundColorEnabled() {
         return backgroundEnabled;
     }
-    
+
     @Override
     public boolean isAnimationEnabled() {
         return animate;
@@ -355,18 +354,20 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     }
 
     protected void drawGauge(double currentValue) {
-        if(isBackgroundColorEnabled()) {
-            drawGaugeBackground(currentValue);
-        }
-        if (isBorderEnabled()) {
-            drawGaugeBorder(currentValue);
-        }
-        drawGaugeDial(currentValue);
-        if (isGaugeTextEnabled()) {
-            drawGaugeText(currentValue);
-        }
-        if (isTicksEnabled()) {
-            drawGaugeTicks(currentValue);
+        if (isVisible()) {
+            if (isBackgroundColorEnabled()) {
+                drawGaugeBackground(currentValue);
+            }
+            if (isBorderEnabled()) {
+                drawGaugeBorder(currentValue);
+            }
+            drawGaugeDial(currentValue);
+            if (isGaugeTextEnabled()) {
+                drawGaugeText(currentValue);
+            }
+            if (isTicksEnabled()) {
+                drawGaugeTicks(currentValue);
+            }
         }
     }
 
@@ -377,6 +378,6 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     abstract void drawGaugeBorder(double currentValue);
 
     abstract void drawGaugeTicks(double currentValue);
-    
+
     abstract void drawGaugeBackground(double currentValue);
 }

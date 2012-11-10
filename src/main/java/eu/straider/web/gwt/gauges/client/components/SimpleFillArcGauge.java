@@ -130,20 +130,22 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
 
     @Override
     protected void drawGauge(double currentValue) {
-        getContext().restore();
-        getContext().clearRect(0, 0, width, height);
-        if (isBackgroundColorEnabled()) {
-            drawGaugeBackground(currentValue);
-        }
-        drawGaugeDial(currentValue);
-        if (isGaugeTextEnabled()) {
-            drawGaugeText(currentValue);
-        }
-        if (isBorderEnabled()) {
-            drawGaugeBorder(currentValue);
-        }
-        if (isTicksEnabled()) {
-            drawGaugeTicks(currentValue);
+        if (isVisible()) {
+            getContext().restore();
+            getContext().clearRect(0, 0, width, height);
+            if (isBackgroundColorEnabled()) {
+                drawGaugeBackground(currentValue);
+            }
+            drawGaugeDial(currentValue);
+            if (isGaugeTextEnabled()) {
+                drawGaugeText(currentValue);
+            }
+            if (isBorderEnabled()) {
+                drawGaugeBorder(currentValue);
+            }
+            if (isTicksEnabled()) {
+                drawGaugeTicks(currentValue);
+            }
         }
     }
 

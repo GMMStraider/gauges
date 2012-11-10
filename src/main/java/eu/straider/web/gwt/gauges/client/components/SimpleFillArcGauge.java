@@ -73,7 +73,7 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
 
     @Override
     void drawGaugeText(double currentValue) {
-        getContext().setFillStyle("black");
+        getContext().setFillStyle(getTextColor());
         getContext().setFont(getFont());
         getContext().setTextAlign(Context2d.TextAlign.CENTER);
         getContext().fillText(getValueFormat().format(currentValue), getCanvas().getCanvasElement().getWidth() / 2, getCanvas().getCanvasElement().getHeight() / 1.2);
@@ -118,11 +118,11 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
     private void drawTick(double value, double tickRadius) {
         getContext().beginPath();
         final double radiansVal = Math.toRadians(getDegreesForValue(value));
-        int x = (int) (Math.cos(radiansVal) * (tickRadius));
-        int y = (int) (Math.sin(radiansVal) * (tickRadius));
+        double x = (Math.cos(radiansVal) * (tickRadius));
+        double y = (Math.sin(radiansVal) * (tickRadius));
         getContext().moveTo(gaugeCenterX + x, gaugeCenterY + y);
-        x = (int) (Math.cos(radiansVal) * radius);
-        y = (int) (Math.sin(radiansVal) * radius);
+        x = (Math.cos(radiansVal) * radius);
+        y = (Math.sin(radiansVal) * radius);
         getContext().lineTo(gaugeCenterX + x, gaugeCenterY + y);
         getContext().closePath();
         getContext().stroke();

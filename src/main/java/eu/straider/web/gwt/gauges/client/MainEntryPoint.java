@@ -28,6 +28,9 @@ public class MainEntryPoint implements EntryPoint {
         final Gauge<Integer> gauge2 = addSimpleFillArcGauge();
         final Gauge<Integer> gauge3 = addMarkerGauge();
         final IntegerBox box = new IntegerBox();
+        RootPanel.get().add(gauge);
+        RootPanel.get().add(gauge2);
+        RootPanel.get().add(gauge3);
         RootPanel.get().add(box);
         Button apply = new Button("Apply", new ClickHandler() {
             @Override
@@ -41,23 +44,20 @@ public class MainEntryPoint implements EntryPoint {
     }
 
     private Gauge<Integer> addMarkerGauge() {
-        final Gauge<Integer> gauge = new MarkerGauge(10, 0, 100, 50);
+        final Gauge<Integer> gauge = new MarkerGauge(0, 100, 50);
         setGaugeData(gauge);
-        RootPanel.get().add(gauge);
         return gauge;
     }
 
     private Gauge<Integer> addSimpleGauge() {
         final Gauge<Integer> gauge = new SimpleGauge(20, 240, 0, 100, 50);
         setGaugeData(gauge);
-        RootPanel.get().add(gauge);
         return gauge;
     }
 
     private Gauge<Integer> addSimpleFillArcGauge() {
         final Gauge<Integer> gauge2 = new SimpleFillArcGauge(0, 100, 50);
         setGaugeData(gauge2);
-        RootPanel.get().add(gauge2);
         return gauge2;
     }
 
@@ -69,7 +69,7 @@ public class MainEntryPoint implements EntryPoint {
         gauge.setValueFormat(NumberFormat.getFormat("0"));
         gauge.setMinorTicksSizeInPercentOfSize(2);
         gauge.setMajorTicksSizeInPercentOfSize(4);
-        gauge.setMajorTicks(9);
+        gauge.setMajorTicks(11);
         gauge.setMinorTicks(4);
         gauge.setTicksEnabled(true);
         gauge.setGaugeColor(CssColor.make("darkred"));

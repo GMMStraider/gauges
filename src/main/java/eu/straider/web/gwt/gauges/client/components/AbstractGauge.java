@@ -31,14 +31,16 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     private CssColor gaugeColor;
     private CssColor borderColor;
     private CssColor backgroundColor;
+    private CssColor tickColor;
+    private CssColor textColor;
     private boolean backgroundEnabled;
     private double borderWidth;
-    private int majorTicks;
-    private int minorTicks;
+    private int majorTicks = 0;
+    private int minorTicks = 0;
     private boolean drawTicks;
     private boolean drawText;
-    private double majorTicksSize;
-    private double minorTicksSize;
+    private double majorTicksSize = 1;
+    private double minorTicksSize = 1;
     private GaugeAnimation<T> gaugeAnimation;
 
     public AbstractGauge() {
@@ -47,6 +49,8 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
         drawText = true;
         gaugeColor = CssColor.make("black");
         borderColor = CssColor.make("black");
+        tickColor = CssColor.make("black");
+        textColor = CssColor.make("black");
         backgroundColor = CssColor.make("white");
         colorRanges = new ArrayList<ColorRange<T>>();
         valueMask = NumberFormat.getFormat("0");
@@ -62,6 +66,27 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
         drawTicks = false;
         gaugeAnimation = new SimpleGaugeValueAnimation<T>(this);
         initWidget(canvas);
+    }
+    
+    
+    @Override
+    public void setTextColor(CssColor color) {
+        textColor = color;
+    }
+    
+    @Override
+    public CssColor getTextColor() {
+        return textColor;
+    }
+    
+    @Override
+    public void setTickColor(CssColor color) {
+        tickColor = color;
+    }
+    
+    @Override
+    public CssColor getTickColor() {
+        return tickColor;
     }
 
     @Override

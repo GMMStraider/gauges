@@ -83,6 +83,7 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
 
     @Override
     void drawGaugeBorder(double currentValue) {
+        getContext().setStrokeStyle(getBorderColor());
         getContext().beginPath();
         getContext().arc(gaugeCenterX, gaugeCenterY, radius, Math.toRadians(180), Math.toRadians(0));
         getContext().closePath();
@@ -157,7 +158,7 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
 
     @Override
     void drawGaugeCaption() {
-        getContext().setFillStyle(getCaption());
+        getContext().setFillStyle(getCaptionColor());
         getContext().setFont(getCaptionFont());
         getContext().setTextAlign(Context2d.TextAlign.CENTER);
         getContext().setTextBaseline(Context2d.TextBaseline.MIDDLE);

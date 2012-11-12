@@ -9,11 +9,13 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import eu.straider.web.gwt.gauges.client.components.MarkerGauge;
 import eu.straider.web.gwt.gauges.client.components.SimpleFillArcGauge;
@@ -134,6 +136,8 @@ public class MainEntryPoint implements EntryPoint {
         addAnimationOption();
         addSizeOption();
         addTicksOption();
+        addColorOption();
+        addFontOption();
     }
 
     private void addVisibilityOptions() {
@@ -217,7 +221,118 @@ public class MainEntryPoint implements EntryPoint {
         optionsPanel.add(size);
     }
 
+    private void addColorOption() {
+        final TextBox borderColor = new TextBox();
+        Button borderColorApply = new Button("Apply", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (Gauge<Integer> gauge : gauges.values()) {
+                    gauge.setBorderColor(CssColor.make(borderColor.getValue()));
+                }
+            }
+        });
+        borderColor.setValue("black");
+        HorizontalPanel borderColorOptions = new HorizontalPanel();
+        borderColorOptions.add(new Label("Border color: "));
+        borderColorOptions.add(borderColor);
+        borderColorOptions.add(borderColorApply);
+        optionsPanel.add(borderColorOptions);
+        final TextBox background = new TextBox();
+        Button backgroundApply = new Button("Apply", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (Gauge<Integer> gauge : gauges.values()) {
+                    gauge.setBackgroundColor(CssColor.make(background.getValue()));
+                }
+            }
+        });
+        background.setValue("lightgrey");
+        HorizontalPanel backgroundColorOptions = new HorizontalPanel();
+        backgroundColorOptions.add(new Label("Background color: "));
+        backgroundColorOptions.add(background);
+        backgroundColorOptions.add(backgroundApply);
+        optionsPanel.add(backgroundColorOptions);
+        final TextBox valueBox = new TextBox();
+        Button valueColorApply = new Button("Apply", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (Gauge<Integer> gauge : gauges.values()) {
+                    gauge.setValueColor(CssColor.make(valueBox.getValue()));
+                }
+            }
+        });
+        valueBox.setValue("black");
+        HorizontalPanel valueColorOptions = new HorizontalPanel();
+        valueColorOptions.add(new Label("Value color: "));
+        valueColorOptions.add(valueBox);
+        valueColorOptions.add(valueColorApply);
+        optionsPanel.add(valueColorOptions);
+        final TextBox captionBox = new TextBox();
+        Button captionColorApply = new Button("Apply", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (Gauge<Integer> gauge : gauges.values()) {
+                    gauge.setCaptionColor(CssColor.make(captionBox.getValue()));
+                }
+            }
+        });
+        captionBox.setValue("black");
+        HorizontalPanel captionColorOptions = new HorizontalPanel();
+        captionColorOptions.add(new Label("Caption color: "));
+        captionColorOptions.add(captionBox);
+        captionColorOptions.add(captionColorApply);
+        optionsPanel.add(captionColorOptions);
+    }
+
     private void addTicksOption() {
+        final CheckBox valueCheck = new CheckBox("Value Text enabled");
+        valueCheck.setValue(true);
+        valueCheck.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (Gauge<Integer> gauge : gauges.values()) {
+                    gauge.setGaugeTextEnabled(valueCheck.getValue());
+                    gauge.setValue(gauge.getValue(), false);
+                }
+            }
+        });
+        optionsPanel.add(valueCheck);
+        final CheckBox captionCheck = new CheckBox("Caption enabled");
+        captionCheck.setValue(true);
+        captionCheck.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (Gauge<Integer> gauge : gauges.values()) {
+                    gauge.setCaptionEnabled(captionCheck.getValue());
+                    gauge.setValue(gauge.getValue(), false);
+                }
+            }
+        });
+        optionsPanel.add(captionCheck);
+        final CheckBox borderCheck = new CheckBox("Border enabled");
+        borderCheck.setValue(true);
+        borderCheck.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (Gauge<Integer> gauge : gauges.values()) {
+                    gauge.setBorderEnabled(borderCheck.getValue());
+                    gauge.setValue(gauge.getValue(), false);
+                }
+            }
+        });
+        optionsPanel.add(borderCheck);
+        final CheckBox backgroundCheck = new CheckBox("Background enabled");
+        backgroundCheck.setValue(true);
+        backgroundCheck.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (Gauge<Integer> gauge : gauges.values()) {
+                    gauge.setBackgroundColorEnabled(backgroundCheck.getValue());
+                    gauge.setValue(gauge.getValue(), false);
+                }
+            }
+        });
+        optionsPanel.add(backgroundCheck);
         final CheckBox ticks = new CheckBox("Ticks enabled");
         ticks.setValue(true);
         ticks.addClickHandler(new ClickHandler() {
@@ -261,5 +376,85 @@ public class MainEntryPoint implements EntryPoint {
         minorTicksOption.add(minorTicks);
         minorTicksOption.add(minorTicksApply);
         optionsPanel.add(minorTicksOption);
+        
+        final DoubleBox minorTicksSize = new DoubleBox();
+        Button minorTicksSizeApply = new Button("Apply", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (Gauge<Integer> gauge : gauges.values()) {
+                    gauge.setMinorTicksSizeInPercentOfSize(minorTicksSize.getValue());
+                }
+            }
+        });
+        minorTicksSize.setValue(2.0);
+        HorizontalPanel minorTicksSizeOptions = new HorizontalPanel();
+        minorTicksSizeOptions.add(new Label("Minor Ticks Size: "));
+        minorTicksSizeOptions.add(minorTicksSize);
+        minorTicksSizeOptions.add(minorTicksSizeApply);
+        optionsPanel.add(minorTicksSizeOptions);
+        final DoubleBox majorTicksSize = new DoubleBox();
+        Button majorTicksSizeApply = new Button("Apply", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (Gauge<Integer> gauge : gauges.values()) {
+                    gauge.setMajorTicksSizeInPercentOfSize(majorTicksSize.getValue());
+                }
+            }
+        });
+        majorTicksSize.setValue(4.0);
+        HorizontalPanel majorTicksSizeOptions = new HorizontalPanel();
+        majorTicksSizeOptions.add(new Label("Major Ticks Size: "));
+        majorTicksSizeOptions.add(majorTicksSize);
+        majorTicksSizeOptions.add(majorTicksSizeApply);
+        optionsPanel.add(majorTicksSizeOptions);
+        
+        final TextBox ticksColor = new TextBox();
+        Button ticksColorApply = new Button("Apply", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (Gauge<Integer> gauge : gauges.values()) {
+                    gauge.setTickColor(CssColor.make(ticksColor.getValue()));
+                }
+            }
+        });
+        ticksColor.setValue("black");
+        HorizontalPanel ticksColorOptions = new HorizontalPanel();
+        ticksColorOptions.add(new Label("Ticks color: "));
+        ticksColorOptions.add(ticksColor);
+        ticksColorOptions.add(ticksColorApply);
+        optionsPanel.add(ticksColorOptions);
+    }
+
+    private void addFontOption() {
+        final TextBox valueBox = new TextBox();
+        Button valueFontApply = new Button("Apply", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (Gauge<Integer> gauge : gauges.values()) {
+                    gauge.setValueFont(valueBox.getValue());
+                }
+            }
+        });
+        valueBox.setValue("bold 32px Lucida Console");
+        HorizontalPanel valueFontOptions = new HorizontalPanel();
+        valueFontOptions.add(new Label("Value font: "));
+        valueFontOptions.add(valueBox);
+        valueFontOptions.add(valueFontApply);
+        optionsPanel.add(valueFontOptions);
+        final TextBox captionBox = new TextBox();
+        Button captionFontApply = new Button("Apply", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (Gauge<Integer> gauge : gauges.values()) {
+                    gauge.setCaptionFont(captionBox.getValue());
+                }
+            }
+        });
+        captionBox.setValue("bold 14px Helvetica");
+        HorizontalPanel captionFontOptions = new HorizontalPanel();
+        captionFontOptions.add(new Label("Caption font: "));
+        captionFontOptions.add(captionBox);
+        captionFontOptions.add(captionFontApply);
+        optionsPanel.add(captionFontOptions);
     }
 }

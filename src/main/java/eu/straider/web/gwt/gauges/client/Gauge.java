@@ -29,6 +29,22 @@ public interface Gauge<T extends Number> extends HasValue<T>, HasAnimation, IsRe
     void setMinValue(T minValue);
 
     void setMaxValue(T maxValue);
+    
+    void setCaption(String caption);
+    
+    String getCaption();
+    
+    void setCaptionFont(String font);
+    
+    String getCaptionFont();
+    
+    void setCaptionEnabled(boolean enabled);
+    
+    boolean isCaptionEnabled();
+    
+    void setCaptionColor(CssColor color);
+    
+    CssColor getCaptionColor();
 
     void setSize(int size);
 
@@ -40,9 +56,9 @@ public interface Gauge<T extends Number> extends HasValue<T>, HasAnimation, IsRe
 
     NumberFormat getValueFormat();
 
-    void setFont(String font);
+    void setValueFont(String font);
 
-    String getFont();
+    String getValueFont();
 
     void addColorRange(ColorRange<T> range);
 
@@ -84,9 +100,9 @@ public interface Gauge<T extends Number> extends HasValue<T>, HasAnimation, IsRe
     
     boolean isBackgroundColorEnabled();
     
-    void setTextColor(CssColor color);
+    void setValueColor(CssColor color);
     
-    CssColor getTextColor();
+    CssColor getValueColor();
     
     void setTickColor(CssColor color);
     

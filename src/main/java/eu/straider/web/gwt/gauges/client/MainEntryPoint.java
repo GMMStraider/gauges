@@ -62,6 +62,8 @@ public class MainEntryPoint implements EntryPoint {
         VerticalPanel vertPanel = new VerticalPanel();
         final Gauge<Integer> gauge = new SimpleGauge(20, 240, 0, 100, 50);
         setGaugeData(gauge);
+        gauge.setCaption("SimpleGauge");
+        gauge.setCaptionFont("bold 14px Helvetica");
         Label label = new Label("SimpleGauge");
         gaugesLabel.put("SimpleGauge", label);
         vertPanel.add(label);
@@ -76,6 +78,8 @@ public class MainEntryPoint implements EntryPoint {
         VerticalPanel vertPanel = new VerticalPanel();
         final Gauge<Integer> gauge = new SimpleFillArcGauge(0, 100, 50);
         setGaugeData(gauge);
+        gauge.setCaption("SimpleFillArcGauge");
+        gauge.setCaptionFont("bold 14px Helvetica");
         Label label = new Label("SimpleFillArcGauge");
         gaugesLabel.put("SimpleFillArcGauge", label);
         vertPanel.add(label);
@@ -125,6 +129,13 @@ public class MainEntryPoint implements EntryPoint {
     }
 
     private void addComboBoxes() {
+        addVisibilityOptions();
+        optionsPanel.add(new Label("Gauge Options"));
+        addAnimationOption();
+        addSizeOption();
+    }
+
+    private void addVisibilityOptions() {
         optionsPanel.add(new Label("Visible Gauges"));
         final CheckBox simpleGaugeCheckBox = new CheckBox("SimpleGauge");
         simpleGaugeCheckBox.setValue(gauges.get("SimpleGauge").isVisible());
@@ -159,7 +170,9 @@ public class MainEntryPoint implements EntryPoint {
             }
         });
         optionsPanel.add(markerGaugeCheckBox);
-        optionsPanel.add(new Label("Gauge Options"));
+    }
+
+    private void addAnimationOption() {
         final CheckBox animation = new CheckBox("Animation enabled");
         animation.setValue(true);
         animation.addClickHandler(new ClickHandler() {
@@ -187,5 +200,22 @@ public class MainEntryPoint implements EntryPoint {
         animationDuration.add(box);
         animationDuration.add(apply);
         optionsPanel.add(animationDuration);
+    }
+    private void addSizeOption() {
+        final IntegerBox box = new IntegerBox();
+        Button apply = new Button("Apply", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (Gauge<Integer> gauge : gauges.values()) {
+                    gauge.setSize(box.getValue());
+                }
+            }
+        });
+        box.setValue(400);
+        HorizontalPanel size = new HorizontalPanel();
+        size.add(new Label("Gauge Size: "));
+        size.add(box);
+        size.add(apply);
+        optionsPanel.add(size);
     }
 }

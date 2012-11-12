@@ -25,7 +25,7 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
         gaugeCenterY = 0;
         setBorderEnabled(true);
         setBorderWidth(borderWidth);
-        setFont("bold 32px Lucida Console");
+        setValueFont("bold 32px Lucida Console");
         setMinValue(minValue);
         setMaxValue(maxValue);
         setAnimationEnabled(true);
@@ -44,6 +44,7 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
         radius = width / 2 - (getBorderWidth() * 4);
         gaugeCenterX = width / 2;
         gaugeCenterY = width / 2 - (getBorderWidth() * 2);
+        drawGauge(getValue().doubleValue());
     }
 
     @Override
@@ -73,10 +74,11 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
 
     @Override
     void drawGaugeText(double currentValue) {
-        getContext().setFillStyle(getTextColor());
-        getContext().setFont(getFont());
+        getContext().setFillStyle(getValueColor());
+        getContext().setFont(getValueFont());
         getContext().setTextAlign(Context2d.TextAlign.CENTER);
-        getContext().fillText(getValueFormat().format(currentValue), getCanvas().getCanvasElement().getWidth() / 2, getCanvas().getCanvasElement().getHeight() / 1.2);
+        getContext().setTextBaseline(Context2d.TextBaseline.MIDDLE);
+        getContext().fillText(getValueFormat().format(currentValue), getCanvas().getCanvasElement().getWidth() / 2, getCanvas().getCanvasElement().getHeight() / 1.3);
     }
 
     @Override
@@ -104,6 +106,7 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
         double tickSizeMajor = maxVal / (getMajorTicks() - 1);
         double tickSizeMinor = tickSizeMajor / (getMinorTicks() + 1);
         double majorVal = getMinValue().doubleValue();
+        getContext().setStrokeStyle(getTickColor());
         for (int i = 0; i <= getMajorTicks(); i++) {
             double minorVal = majorVal;
             for (int j = 0; j < getMinorTicks(); j++) {
@@ -140,13 +143,25 @@ public class SimpleFillArcGauge<T extends Number> extends AbstractGauge<T> {
             if (isGaugeTextEnabled()) {
                 drawGaugeText(currentValue);
             }
-            if (isBorderEnabled()) {
-                drawGaugeBorder(currentValue);
+            if (isCaptionEnabled()) {
+                drawGaugeCaption();
             }
             if (isTicksEnabled()) {
                 drawGaugeTicks(currentValue);
             }
+            if (isBorderEnabled()) {
+                drawGaugeBorder(currentValue);
+            }
         }
+    }
+
+    @Override
+    void drawGaugeCaption() {
+        getContext().setFillStyle(getCaption());
+        getContext().setFont(getCaptionFont());
+        getContext().setTextAlign(Context2d.TextAlign.CENTER);
+        getContext().setTextBaseline(Context2d.TextBaseline.MIDDLE);
+        getContext().fillText(getCaption(), getCanvas().getCanvasElement().getWidth() / 2, getCanvas().getCanvasElement().getHeight() / 2);
     }
 
     private void setArcData(double arcValue) {

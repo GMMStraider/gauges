@@ -25,7 +25,7 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
         super();
         width = 0;
         height = 0;
-        setFont("bold 16px Lucida Console");
+        setValueFont("bold 16px Lucida Console");
         setMinValue(minValue);
         setMaxValue(maxValue);
         setAnimationEnabled(true);
@@ -42,6 +42,7 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
         getCanvas().setCoordinateSpaceHeight(height);
         getCanvas().setCoordinateSpaceWidth(width);
         updateGaugeCalcData();
+        drawGauge(getValue().doubleValue());
     }
 
     @Override
@@ -81,8 +82,8 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
     }
 
     @Override
-    public final void setFont(String font) {
-        super.setFont(font);
+    public final void setValueFont(String font) {
+        super.setValueFont(font);
         updateGaugeCalcData();
     }
 
@@ -96,7 +97,7 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
             onePercentGauge = (double) getGaugeHeight() / (double) 100;
             onePercentVal = (double) 100 / maxVal;
             GWT.log("onePercentVal: " + onePercentVal + ", onePercentGauge: " + onePercentGauge + ", minValue: " + getMinValue().doubleValue());
-            getContext().setFont(getFont());
+            getContext().setFont(getValueFont());
             double tmpMaxFontWidth = getContext().measureText(getValueFormat().format(getMaxValue().doubleValue())).getWidth();
             double tmpMinFontWidth = getContext().measureText(getValueFormat().format(getMinValue().doubleValue())).getWidth();
             if (tmpMaxFontWidth > tmpMinFontWidth) {
@@ -170,6 +171,11 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
         getContext().quadraticCurveTo(x, y, x + r, y);
         getContext().closePath();
     }
+    
+    @Override
+    void drawGaugeCaption() {
+        
+    }
 
     @Override
     protected void drawGauge(double currentValue) {
@@ -230,8 +236,8 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
     }
 
     void drawGaugeTickerText(double currentValue, double textStartPosition) {
-        getContext().setFillStyle(getTextColor());
-        getContext().setFont(getFont());
+        getContext().setFillStyle(getValueColor());
+        getContext().setFont(getValueFont());
         getContext().setTextAlign(Context2d.TextAlign.CENTER);
         getContext().setTextBaseline(Context2d.TextBaseline.MIDDLE);
         getContext().setTextAlign(Context2d.TextAlign.LEFT);

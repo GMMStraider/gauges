@@ -79,6 +79,7 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void setValueColor(CssColor color) {
         textColor = color;
+        repaint();
     }
 
     @Override
@@ -89,6 +90,7 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void setCaptionColor(CssColor color) {
         captionColor = color;
+        repaint();
     }
 
     @Override
@@ -99,6 +101,7 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void setTickColor(CssColor color) {
         tickColor = color;
+        repaint();
     }
 
     @Override
@@ -123,32 +126,35 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     protected Context2d getContext() {
         return context;
     }
-    
+
     @Override
     public void setCaption(String caption) {
         this.caption = caption;
+        repaint();
     }
-    
+
     @Override
     public String getCaption() {
         return caption;
     }
-    
+
     @Override
     public void setCaptionFont(String font) {
         captionFont = font;
+        repaint();
     }
-    
+
     @Override
     public String getCaptionFont() {
         return captionFont;
     }
-    
+
     @Override
     public void setCaptionEnabled(boolean enabled) {
         captionVisible = enabled;
+        repaint();
     }
-    
+
     @Override
     public boolean isCaptionEnabled() {
         return captionVisible;
@@ -157,8 +163,8 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void setVisible(boolean visible) {
         super.setVisible(visible);
-        if(visible) {
-            drawGauge(value.doubleValue());
+        if (visible) {
+            repaint();
         }
     }
 
@@ -188,7 +194,7 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
         if (isAnimationEnabled()) {
             gaugeAnimation.goToValue(value, oldValue, getAnimationDuration());
         } else {
-            drawGauge(value.doubleValue());
+            repaint();
         }
         if (fireEvents) {
             ValueChangeEvent.fire(this, value);
@@ -203,6 +209,7 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void setBackgroundColor(CssColor color) {
         backgroundColor = color;
+        repaint();
     }
 
     @Override
@@ -213,6 +220,7 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void setBackgroundColorEnabled(boolean enabled) {
         backgroundEnabled = enabled;
+        repaint();
     }
 
     @Override
@@ -228,6 +236,7 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void setAnimationEnabled(boolean enable) {
         animate = enable;
+        repaint();
     }
 
     @Override
@@ -243,11 +252,13 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void setMinValue(T minValue) {
         this.minValue = minValue;
+        repaint();
     }
 
     @Override
     public void setMaxValue(T maxValue) {
         this.maxValue = maxValue;
+        repaint();
     }
 
     @Override
@@ -257,12 +268,13 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
 
         canvas.setCoordinateSpaceHeight(size);
         canvas.setCoordinateSpaceWidth(size);
-        drawGauge(getValue().doubleValue());
+        repaint();
     }
 
     @Override
     public void setAnimationDuration(int milliseconds) {
         animationDuration = milliseconds;
+        repaint();
     }
 
     @Override
@@ -273,6 +285,7 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void setValueFormat(NumberFormat mask) {
         this.valueMask = mask;
+        repaint();
     }
 
     @Override
@@ -283,6 +296,7 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void setValueFont(String font) {
         this.valueFont = font;
+        repaint();
     }
 
     @Override
@@ -293,6 +307,7 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void addColorRange(ColorRange range) {
         colorRanges.add(range);
+        repaint();
     }
 
     @Override
@@ -303,16 +318,19 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void removeColorRange(ColorRange range) {
         colorRanges.remove(range);
+        repaint();
     }
 
     @Override
     public void clearColorRanges() {
         colorRanges.clear();
+        repaint();
     }
 
     @Override
     public void setGaugeColor(CssColor color) {
         gaugeColor = color;
+        repaint();
     }
 
     @Override
@@ -323,6 +341,7 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void setBorderWidth(double borderWidth) {
         this.borderWidth = borderWidth;
+        repaint();
     }
 
     @Override
@@ -333,6 +352,7 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void setBorderColor(CssColor color) {
         this.borderColor = color;
+        repaint();
     }
 
     @Override
@@ -343,6 +363,7 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void setBorderEnabled(boolean enabled) {
         borderVisible = enabled;
+        repaint();
     }
 
     @Override
@@ -358,11 +379,13 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void setTicksEnabled(boolean enabled) {
         drawTicks = enabled;
+        repaint();
     }
 
     @Override
     public void setMinorTicks(int ticks) {
         minorTicks = ticks;
+        repaint();
     }
 
     @Override
@@ -373,6 +396,7 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void setMajorTicks(int ticks) {
         majorTicks = ticks;
+        repaint();
     }
 
     @Override
@@ -383,11 +407,13 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void setMajorTicksSizeInPercentOfSize(double size) {
         majorTicksSize = size;
+        repaint();
     }
 
     @Override
     public void setMinorTicksSizeInPercentOfSize(double size) {
         minorTicksSize = size;
+        repaint();
     }
 
     @Override
@@ -403,11 +429,18 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     @Override
     public void setGaugeTextEnabled(boolean enabled) {
         drawText = enabled;
+        repaint();
     }
 
     @Override
     public boolean isGaugeTextEnabled() {
         return drawText;
+    }
+
+    private void repaint() {
+        if (getValue() != null) {
+            drawGauge(getValue().doubleValue());
+        }
     }
 
     protected void drawGauge(double currentValue) {
@@ -422,7 +455,7 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
             if (isGaugeTextEnabled()) {
                 drawGaugeText(currentValue);
             }
-            if(isCaptionEnabled()) {
+            if (isCaptionEnabled()) {
                 drawGaugeCaption();
             }
             if (isTicksEnabled()) {
@@ -434,7 +467,7 @@ abstract class AbstractGauge<T extends Number> extends Composite implements Gaug
     abstract void drawGaugeDial(double currentValue);
 
     abstract void drawGaugeText(double currentValue);
-    
+
     abstract void drawGaugeCaption();
 
     abstract void drawGaugeBorder(double currentValue);

@@ -133,6 +133,7 @@ public class MainEntryPoint implements EntryPoint {
         optionsPanel.add(new Label("Gauge Options"));
         addAnimationOption();
         addSizeOption();
+        addTicksOption();
     }
 
     private void addVisibilityOptions() {
@@ -140,7 +141,6 @@ public class MainEntryPoint implements EntryPoint {
         final CheckBox simpleGaugeCheckBox = new CheckBox("SimpleGauge");
         simpleGaugeCheckBox.setValue(gauges.get("SimpleGauge").isVisible());
         simpleGaugeCheckBox.addClickHandler(new ClickHandler() {
-
             @Override
             public void onClick(ClickEvent event) {
                 gauges.get("SimpleGauge").setVisible(simpleGaugeCheckBox.getValue());
@@ -151,7 +151,6 @@ public class MainEntryPoint implements EntryPoint {
         final CheckBox simpleFillArcGaugeCheckBox = new CheckBox("SimpleFillArcGauge");
         simpleFillArcGaugeCheckBox.setValue(gauges.get("SimpleFillArcGauge").isVisible());
         simpleFillArcGaugeCheckBox.addClickHandler(new ClickHandler() {
-
             @Override
             public void onClick(ClickEvent event) {
                 gauges.get("SimpleFillArcGauge").setVisible(simpleFillArcGaugeCheckBox.getValue());
@@ -162,7 +161,6 @@ public class MainEntryPoint implements EntryPoint {
         final CheckBox markerGaugeCheckBox = new CheckBox("MarkerGauge");
         markerGaugeCheckBox.setValue(gauges.get("MarkerGauge").isVisible());
         markerGaugeCheckBox.addClickHandler(new ClickHandler() {
-
             @Override
             public void onClick(ClickEvent event) {
                 gauges.get("MarkerGauge").setVisible(markerGaugeCheckBox.getValue());
@@ -176,7 +174,6 @@ public class MainEntryPoint implements EntryPoint {
         final CheckBox animation = new CheckBox("Animation enabled");
         animation.setValue(true);
         animation.addClickHandler(new ClickHandler() {
-
             @Override
             public void onClick(ClickEvent event) {
                 for (Gauge<Integer> gauge : gauges.values()) {
@@ -201,6 +198,7 @@ public class MainEntryPoint implements EntryPoint {
         animationDuration.add(apply);
         optionsPanel.add(animationDuration);
     }
+
     private void addSizeOption() {
         final IntegerBox box = new IntegerBox();
         Button apply = new Button("Apply", new ClickHandler() {
@@ -217,5 +215,51 @@ public class MainEntryPoint implements EntryPoint {
         size.add(box);
         size.add(apply);
         optionsPanel.add(size);
+    }
+
+    private void addTicksOption() {
+        final CheckBox ticks = new CheckBox("Ticks enabled");
+        ticks.setValue(true);
+        ticks.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (Gauge<Integer> gauge : gauges.values()) {
+                    gauge.setTicksEnabled(ticks.getValue());
+                    gauge.setValue(gauge.getValue(), false);
+                }
+            }
+        });
+        optionsPanel.add(ticks);
+        final IntegerBox majorTicks = new IntegerBox();
+        Button majorTicksApply = new Button("Apply", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (Gauge<Integer> gauge : gauges.values()) {
+                    gauge.setMajorTicks(majorTicks.getValue());
+                    gauge.setValue(gauge.getValue(), false);
+                }
+            }
+        });
+        majorTicks.setValue(11);
+        final IntegerBox minorTicks = new IntegerBox();
+        Button minorTicksApply = new Button("Apply", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (Gauge<Integer> gauge : gauges.values()) {
+                    gauge.setMinorTicks(minorTicks.getValue());
+                }
+            }
+        });
+        minorTicks.setValue(4);
+        HorizontalPanel majorTicksOptions = new HorizontalPanel();
+        majorTicksOptions.add(new Label("Major Ticks: "));
+        majorTicksOptions.add(majorTicks);
+        majorTicksOptions.add(majorTicksApply);
+        optionsPanel.add(majorTicksOptions);
+        HorizontalPanel minorTicksOption = new HorizontalPanel();
+        minorTicksOption.add(new Label("Minor Ticks: "));
+        minorTicksOption.add(minorTicks);
+        minorTicksOption.add(minorTicksApply);
+        optionsPanel.add(minorTicksOption);
     }
 }

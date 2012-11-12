@@ -87,6 +87,18 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
         updateGaugeCalcData();
     }
 
+    @Override
+    public void setTicksEnabled(boolean enabled) {
+        super.setTicksEnabled(enabled);
+        updateGaugeCalcData();
+    }
+
+    @Override
+    public void setGaugeTextEnabled(boolean enabled) {
+        super.setGaugeTextEnabled(enabled);
+        updateGaugeCalcData();
+    }
+
     private void updateGaugeCalcData() {
         majorTickLength = getGaugeHeight() / 100 * getMajorTicksSizeInPercentOfSize();
         minorTickLength = getGaugeHeight() / 100 * getMinorTicksSizeInPercentOfSize();
@@ -105,8 +117,18 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
             } else {
                 tickerTextWidth = tmpMinFontWidth;
             }
-            colorGaugeWidth = width - ((getGaugeStartPos() * 1.5) + tickerTextWidth + majorTickLength + (2 * getBorderWidth()) + (2 * PADDING));
+            double tmp = (getGaugeStartPos() * 1.5) + (2 * PADDING);
+            if (isGaugeTextEnabled()) {
+                tmp += tickerTextWidth;
+            }
+            if (isTicksEnabled()) {
+                tmp += majorTickLength;
+            }
+            colorGaugeWidth = width - tmp;
             tickerStartPos = getGaugeStartPos() + colorGaugeWidth + PADDING;
+        }
+        if(getValue() != null) {
+            drawGauge(getValue().doubleValue());
         }
     }
 
@@ -138,6 +160,15 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
 
     @Override
     void drawGaugeText(double currentValue) {
+        double majorVal = getMinValue().doubleValue();
+        double textPos = tickerStartPos + PADDING;
+        if (isTicksEnabled()) {
+            textPos += majorTickLength;
+        }
+        for (int i = 0; i < getMajorTicks(); i++) {
+            drawGaugeTickerText(majorVal, textPos);
+            majorVal += tickSizeMajor;
+        }
     }
 
     @Override
@@ -171,10 +202,9 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
         getContext().quadraticCurveTo(x, y, x + r, y);
         getContext().closePath();
     }
-    
+
     @Override
     void drawGaugeCaption() {
-        
     }
 
     @Override
@@ -188,11 +218,11 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
             if (isBorderEnabled()) {
                 drawGaugeBorder(currentValue);
             }
-            if (isGaugeTextEnabled()) {
-                drawGaugeText(currentValue);
-            }
             if (isTicksEnabled()) {
                 drawGaugeTicks(currentValue);
+            }
+            if (isGaugeTextEnabled()) {
+                drawGaugeText(currentValue);
             }
             drawGaugeDial(currentValue);
         }
@@ -210,18 +240,15 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
                 }
             }
             drawTick(majorVal, tickerStartPos, majorTickLength);
-            if (isGaugeTextEnabled()) {
-                drawGaugeTickerText(majorVal, tickerStartPos + majorTickLength + PADDING);
-            }
             majorVal += tickSizeMajor;
         }
     }
 
     private double getGaugePosForValue(double value) {
         double tmp = value;
-        if(getMinValue().doubleValue() < 0) {
-            tmp = value -getMinValue().doubleValue();
-        } 
+        if (getMinValue().doubleValue() < 0) {
+            tmp = value - getMinValue().doubleValue();
+        }
         return (getGaugeHeight() - (onePercentGauge * (onePercentVal * (tmp)))) + getGaugeStartPos();
     }
 
@@ -247,14 +274,14 @@ public class MarkerGauge<T extends Number> extends AbstractGauge<T> {
 
     private void drawColorRanges(double onePercentGauge, double onePercentVal) {
         double tmp = 0;
-        if(getMinValue().doubleValue() < 0) {
+        if (getMinValue().doubleValue() < 0) {
             tmp = getMinValue().doubleValue() * -1;
-        } 
+        }
         for (ColorRange range : getColorRanges()) {
             Number min = range.getMin();
             Number max = range.getMax();
-            double minHeight = onePercentGauge * (onePercentVal * (min.doubleValue()+tmp));
-            double maxHeight = onePercentGauge * (onePercentVal * (max.doubleValue()+tmp));
+            double minHeight = onePercentGauge * (onePercentVal * (min.doubleValue() + tmp));
+            double maxHeight = onePercentGauge * (onePercentVal * (max.doubleValue() + tmp));
             getContext().setFillStyle(range.getColor());
             getContext().beginPath();
             double colorHeight = (getGaugeHeight() - maxHeight) - (getGaugeHeight() - minHeight);
